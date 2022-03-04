@@ -4,7 +4,7 @@
 #include "ARPGCharacter.h"
 #include "Weapon.h"
 #include "DrawDebugHelpers.h"
-#include "Components/PrimitiveComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -87,43 +87,42 @@ void AARPGCharacter::LookRightRate(float AxisValue)
 	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AARPGCharacter::SteelPush()
+bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
 {
-
-	//TODO: REFACTOR
-	FHitResult Hit;
 
 	const FVector Start = GetActorLocation();
 	
 	FCollisionQueryParams TraceParams;
 
 	AController* OwnerController = GetController();
-	if (OwnerController == nullptr) return ;
+	if (OwnerController == nullptr) return false;
 	FVector Loc;
 	FRotator Rot;
 	OwnerController->GetPlayerViewPoint(Loc, Rot);//these are out params
 	
 	FVector End = Loc + Rot.Vector() * TraceDistance;
 	TraceParams.AddIgnoredActor(this);
-	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit,
+	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, .5f);
+	return GetWorld()->LineTraceSingleByChannel(Hit,
 										Start,
 										End,
 										ECollisionChannel::ECC_Visibility,
 										TraceParams); // check defaultengine.ini file to get bullet collision channel
+}
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, .5f);
-	
-	UE_LOG(LogTemp, Warning, TEXT("Bool: %s"), bHit ? TEXT("true") : TEXT("false"));
+void AARPGCharacter::SteelPush()
+{
+	FHitResult Hit;
 
-	if (bHit)
+	if (GetAllomanticLines(Hit))
 	{
 		UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
 		if (MeshComponent && Hit.GetActor()->IsRootComponentMovable())
 			
 		{
 			FVector Forward = this->GetActorForwardVector();
-			MeshComponent->AddImpulse(Forward * ImpulseForce * MeshComponent->GetMass());
-			GetMesh()->AddImpulse(Forward * ImpulseForce * GetMesh()->GetMass() * -1);
+			MeshComponent->AddImpulse(Forward * ImpulseForce * GetMesh()->GetMass());
+			ACharacter::LaunchCharacter(Forward * ImpulseForce * MeshComponent->GetMass() * -1, false, true);
 		}
 	}
 
@@ -131,42 +130,17 @@ void AARPGCharacter::SteelPush()
 
 void AARPGCharacter::IronPull()
 {
-
-	//TODO: REFACTOR
 	FHitResult Hit;
 
-	const FVector Start = GetActorLocation();
-
-	FCollisionQueryParams TraceParams;
-
-	AController* OwnerController = GetController();
-	if (OwnerController == nullptr) return;
-	FVector Loc;
-	FRotator Rot;
-	OwnerController->GetPlayerViewPoint(Loc, Rot);//these are out params
-
-	FVector End = Loc + Rot.Vector() * TraceDistance;
-	TraceParams.AddIgnoredActor(this);
-	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit,
-		Start,
-		End,
-		ECollisionChannel::ECC_Visibility,
-		TraceParams); // check defaultengine.ini file to get bullet collision channel
-
-	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, .5f);
-
-	UE_LOG(LogTemp, Warning, TEXT("Bool: %s"), bHit ? TEXT("true") : TEXT("false"));
-
-	if (bHit)
+	if (GetAllomanticLines(Hit))
 	{
 		UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
 		if (MeshComponent && Hit.GetActor()->IsRootComponentMovable())
 
 		{
 			FVector Backward = this->GetActorForwardVector() * -1;
-			MeshComponent->AddImpulse(Backward * ImpulseForce * MeshComponent->GetMass());
-			GetMesh()->AddImpulse(Backward * ImpulseForce * GetMesh()->GetMass() * -1);
-			//probably shouldn't add impulse, look for way to add velocity, or move.
+			MeshComponent->AddImpulse(Backward * ImpulseForce * GetMesh()->GetMass());
+			ACharacter::LaunchCharacter(Backward * ImpulseForce * MeshComponent->GetMass() * -1, false, true);
 		}
 	}
 

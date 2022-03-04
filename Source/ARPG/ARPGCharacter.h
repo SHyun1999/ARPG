@@ -40,11 +40,13 @@ private:
 	//ACTIONS
 	void SteelPush();
 	void IronPull();
+	bool GetAllomanticLines(FHitResult& Hit);
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float TraceDistance = 10000.f;
+	float TraceDistance = 2000.f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float ImpulseForce = 1000.f;
+	float ImpulseForce = 100.f;
+
 
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10;
