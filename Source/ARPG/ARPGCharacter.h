@@ -38,9 +38,15 @@ private:
 	void LookRightRate(float AxisValue);
 
 	//ACTIONS
-	void SteelPush();
-	void IronPull();
+	
+	//traces a line from the player's perspective, returns true if the line traced connects with a moveable object.
 	bool GetAllomanticLines(FHitResult& Hit);
+	// returns forward vector multiplied by ImpulseForce
+	FVector GetForceToApplyVector();
+	//if GetAllomanticLines is true, pushes the object and the player on opposite directions. Dependent on the mass.
+	void SteelPush();
+	//if GetAllomanticLines is true, pulls the object and the player toward each other. Dependent on the mass.
+	void IronPull();
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float TraceDistance = 2000.f;

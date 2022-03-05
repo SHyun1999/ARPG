@@ -106,8 +106,13 @@ bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
 	return GetWorld()->LineTraceSingleByChannel(Hit,
 										Start,
 										End,
-										ECollisionChannel::ECC_Visibility,
-										TraceParams); // check defaultengine.ini file to get bullet collision channel
+										ECollisionChannel::ECC_Visibility, // check defaultengine.ini file to get bullet collision channel
+										TraceParams); 
+}
+
+FVector AARPGCharacter::GetForceToApplyVector()
+{
+	return this->GetActorForwardVector() * ImpulseForce;
 }
 
 void AARPGCharacter::SteelPush()
@@ -118,11 +123,9 @@ void AARPGCharacter::SteelPush()
 	{
 		UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
 		if (MeshComponent && Hit.GetActor()->IsRootComponentMovable())
-			
 		{
-			FVector Forward = this->GetActorForwardVector();
-			MeshComponent->AddImpulse(Forward * ImpulseForce * GetMesh()->GetMass());
-			ACharacter::LaunchCharacter(Forward * ImpulseForce * MeshComponent->GetMass() * -1, false, true);
+			MeshComponent->AddImpulse(GetForceToApplyVector() * GetMesh()->GetMass());
+			ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() * -1, false, true);
 		}
 	}
 
@@ -136,11 +139,9 @@ void AARPGCharacter::IronPull()
 	{
 		UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
 		if (MeshComponent && Hit.GetActor()->IsRootComponentMovable())
-
 		{
-			FVector Backward = this->GetActorForwardVector() * -1;
-			MeshComponent->AddImpulse(Backward * ImpulseForce * GetMesh()->GetMass());
-			ACharacter::LaunchCharacter(Backward * ImpulseForce * MeshComponent->GetMass() * -1, false, true);
+			MeshComponent->AddImpulse(GetForceToApplyVector() * GetMesh()->GetMass() * -1);
+			ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() , false, true);
 		}
 	}
 
