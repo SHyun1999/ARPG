@@ -28,6 +28,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//returns percentage of metal reserves.
+	UFUNCTION(BlueprintPure)
+	float GetMetalReservePercent() const;
 
 private:
 	void MoveForward(float AxisValue);
@@ -57,6 +60,11 @@ private:
 	float TraceDistance = 2000.f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float ImpulseForce = 100.f;
+
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float MaxMetalReserve = 100.f;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float CurrentMetalReserve;
 
 
 	UPROPERTY(EditAnywhere)

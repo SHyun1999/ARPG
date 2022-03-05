@@ -13,5 +13,11 @@ UCLASS()
 class ARPG_API AARPGCharacterController : public APlayerController
 {
 	GENERATED_BODY()
-	
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> HUDClass;
 };

@@ -23,6 +23,8 @@ void AARPGCharacter::BeginPlay()
 	Weapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
 	Weapon->SetOwner(this);
+
+	CurrentMetalReserve = 50.f;
 	
 }
 
@@ -128,6 +130,12 @@ bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
 										TraceParams); 
 }
 
+float AARPGCharacter::GetMetalReservePercent() const
+{
+
+	
+	return CurrentMetalReserve / MaxMetalReserve;
+}
 
 void AARPGCharacter::SteelPush()
 {
