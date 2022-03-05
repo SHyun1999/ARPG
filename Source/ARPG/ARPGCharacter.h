@@ -7,6 +7,7 @@
 #include "ARPGCharacter.generated.h"
 
 class AWeapon;
+class UMetalComponent;
 
 UCLASS()
 class ARPG_API AARPGCharacter : public ACharacter
@@ -47,6 +48,10 @@ private:
 	void SteelPush();
 	//if GetAllomanticLines is true, pulls the object and the player toward each other. Dependent on the mass.
 	void IronPull();
+	//returns metal component of the hit object.
+	UMetalComponent* GetMetalComp(FHitResult Hit);
+	//return static mesh component of the hit object.
+	UStaticMeshComponent* GetMeshComp(FHitResult Hit);
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float TraceDistance = 2000.f;

@@ -5,6 +5,7 @@
 #include "Weapon.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "MetalComponent.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -57,6 +58,7 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
+//MOVEMENT
 void AARPGCharacter::MoveForward(float AxisValue)
 {
 	AddMovementInput(GetActorForwardVector() * AxisValue);
@@ -87,6 +89,22 @@ void AARPGCharacter::LookRightRate(float AxisValue)
 	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
 }
 
+//ABILITIES
+FVector AARPGCharacter::GetForceToApplyVector()
+{
+	return this->GetActorForwardVector() * ImpulseForce;
+}
+
+UMetalComponent* AARPGCharacter::GetMetalComp(FHitResult Hit)
+{
+	return Cast<UMetalComponent>(Hit.GetActor()->FindComponentByClass<UMetalComponent>());
+}
+
+UStaticMeshComponent* AARPGCharacter::GetMeshComp(FHitResult Hit) 
+{
+	return Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
+}
+
 bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
 {
 
@@ -110,10 +128,6 @@ bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
 										TraceParams); 
 }
 
-FVector AARPGCharacter::GetForceToApplyVector()
-{
-	return this->GetActorForwardVector() * ImpulseForce;
-}
 
 void AARPGCharacter::SteelPush()
 {
@@ -121,9 +135,11 @@ void AARPGCharacter::SteelPush()
 
 	if (GetAllomanticLines(Hit))
 	{
-		UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
-		if (MeshComponent && Hit.GetActor()->IsRootComponentMovable())
+		UStaticMeshComponent* MeshComponent = GetMeshComp(Hit);
+		UMetalComponent* MetalComponent = GetMetalComp(Hit);
+		if (MetalComponent && MeshComponent && Hit.GetActor()->IsRootComponentMovable()) //Check if is metal, and exists, and is movable.
 		{
+			if (MetalComponent->bIsAlluminum) return; //allomancy doesn't affect alluminum!
 			MeshComponent->AddImpulse(GetForceToApplyVector() * GetMesh()->GetMass());
 			ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() * -1, false, true);
 		}
@@ -137,9 +153,11 @@ void AARPGCharacter::IronPull()
 
 	if (GetAllomanticLines(Hit))
 	{
-		UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
-		if (MeshComponent && Hit.GetActor()->IsRootComponentMovable())
+		UStaticMeshComponent* MeshComponent = GetMeshComp(Hit);
+		UMetalComponent* MetalComponent = GetMetalComp(Hit);
+		if (MetalComponent && MeshComponent && Hit.GetActor()->IsRootComponentMovable())  //Check if is metal, and exists, and is movable.
 		{
+			if (MetalComponent->bIsAlluminum) return; //allomancy doesn't affect alluminum!
 			MeshComponent->AddImpulse(GetForceToApplyVector() * GetMesh()->GetMass() * -1);
 			ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() , false, true);
 		}
