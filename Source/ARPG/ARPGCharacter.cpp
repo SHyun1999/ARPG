@@ -6,6 +6,8 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MetalComponent.h"
+#include "Misc/App.h"
+
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -24,7 +26,7 @@ void AARPGCharacter::BeginPlay()
 	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
 	Weapon->SetOwner(this);
 
-	CurrentMetalReserve = 50.f;
+	CurrentMetalReserve = MaxMetalReserve;
 	
 }
 
@@ -32,6 +34,8 @@ void AARPGCharacter::BeginPlay()
 void AARPGCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	ReduceMetalReserve(DrainingRatio * DeltaTime);
 
 }
 
@@ -53,14 +57,13 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	//ACTIONS
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction(TEXT("SteelPush"), EInputEvent::IE_Pressed, this, &AARPGCharacter::SteelPush);
-	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::IronPull);
-
-	//PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &AShooterCharARPGCharacteracter::Shoot);
+	PlayerInputComponent->BindAction(TEXT("SteelPush"), EInputEvent::IE_Pressed, this, &AARPGCharacter::SteelIron<1>);
+	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::SteelIron<-1>);
 
 }
 
-//MOVEMENT
+//////////////////////////////////////MOVEMENT
+/////////////////////////////////////////////////////////////////////////
 void AARPGCharacter::MoveForward(float AxisValue)
 {
 	AddMovementInput(GetActorForwardVector() * AxisValue);
@@ -91,20 +94,11 @@ void AARPGCharacter::LookRightRate(float AxisValue)
 	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
 }
 
-//ABILITIES
+//////////////////////////////////////ABILITIES
+/////////////////////////////////////////////////////////////////////////
 FVector AARPGCharacter::GetForceToApplyVector()
 {
 	return this->GetActorForwardVector() * ImpulseForce;
-}
-
-UMetalComponent* AARPGCharacter::GetMetalComp(FHitResult Hit)
-{
-	return Cast<UMetalComponent>(Hit.GetActor()->FindComponentByClass<UMetalComponent>());
-}
-
-UStaticMeshComponent* AARPGCharacter::GetMeshComp(FHitResult Hit) 
-{
-	return Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
 }
 
 bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
@@ -130,35 +124,10 @@ bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
 										TraceParams); 
 }
 
-float AARPGCharacter::GetMetalReservePercent() const
-{
-
-	
-	return CurrentMetalReserve / MaxMetalReserve;
-}
-
-void AARPGCharacter::SteelPush()
+void AARPGCharacter::SteelIron(int Direction)
 {
 	FHitResult Hit;
-
-	if (GetAllomanticLines(Hit))
-	{
-		UStaticMeshComponent* MeshComponent = GetMeshComp(Hit);
-		UMetalComponent* MetalComponent = GetMetalComp(Hit);
-		if (MetalComponent && MeshComponent && Hit.GetActor()->IsRootComponentMovable()) //Check if is metal, and exists, and is movable.
-		{
-			if (MetalComponent->bIsAlluminum) return; //allomancy doesn't affect alluminum!
-			MeshComponent->AddImpulse(GetForceToApplyVector() * GetMesh()->GetMass());
-			ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() * -1, false, true);
-		}
-	}
-
-}
-
-void AARPGCharacter::IronPull()
-{
-	FHitResult Hit;
-
+	if (!CanCastAllomanticAction()) return;
 	if (GetAllomanticLines(Hit))
 	{
 		UStaticMeshComponent* MeshComponent = GetMeshComp(Hit);
@@ -166,9 +135,45 @@ void AARPGCharacter::IronPull()
 		if (MetalComponent && MeshComponent && Hit.GetActor()->IsRootComponentMovable())  //Check if is metal, and exists, and is movable.
 		{
 			if (MetalComponent->bIsAlluminum) return; //allomancy doesn't affect alluminum!
-			MeshComponent->AddImpulse(GetForceToApplyVector() * GetMesh()->GetMass() * -1);
-			ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() , false, true);
+			ReduceMetalReserve(AllomanticActionCost);
+			MeshComponent->AddImpulse(GetForceToApplyVector() * GetMesh()->GetMass() * Direction);
+			ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() * Direction * -1, false, true);
 		}
 	}
+}
 
+template <int Direction>
+void AARPGCharacter::SteelIron()
+{
+	SteelIron(Direction);
+}
+
+//////////////////////////////////////METAL RESERVES
+/////////////////////////////////////////////////////////////////////////
+float AARPGCharacter::GetMetalReservePercent() const
+{
+	return CurrentMetalReserve / MaxMetalReserve;
+}
+
+void AARPGCharacter::ReduceMetalReserve(float QuantToRemove)
+{
+	QuantToRemove = FMath::Min(CurrentMetalReserve, QuantToRemove);
+	CurrentMetalReserve -= QuantToRemove;
+}
+
+bool AARPGCharacter::CanCastAllomanticAction()
+{
+	return AllomanticActionCost < CurrentMetalReserve;
+}
+
+//////////////////////////////////////Checkers
+/////////////////////////////////////////////////////////////////////////
+UMetalComponent* AARPGCharacter::GetMetalComp(FHitResult Hit)
+{
+	return Cast<UMetalComponent>(Hit.GetActor()->FindComponentByClass<UMetalComponent>());
+}
+
+UStaticMeshComponent* AARPGCharacter::GetMeshComp(FHitResult Hit) 
+{
+	return Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
 }

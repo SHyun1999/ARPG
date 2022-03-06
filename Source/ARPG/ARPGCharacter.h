@@ -41,8 +41,11 @@ private:
 	void LookUpRate(float AxisValue);
 	void LookRightRate(float AxisValue);
 
+	void ReduceMetalReserve(float QuantToRemove);
+
 	//ACTIONS
-	
+	// checks if enough to cast allomantic ability.
+	bool CanCastAllomanticAction();
 	//traces a line from the player's perspective, returns true if the line traced connects with a moveable object.
 	bool GetAllomanticLines(FHitResult& Hit);
 	// returns forward vector multiplied by ImpulseForce
@@ -56,16 +59,27 @@ private:
 	//return static mesh component of the hit object.
 	UStaticMeshComponent* GetMeshComp(FHitResult Hit);
 
+	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
+	void SteelIron(int Direction);
+	template<int Direction>
+	void SteelIron();
+
+
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float TraceDistance = 2000.f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float ImpulseForce = 100.f;
+	float ImpulseForce = 150.f;
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float MaxMetalReserve = 100.f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float CurrentMetalReserve;
 
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float AllomanticActionCost = 10;
+
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float DrainingRatio = 0.1;
 
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10;
