@@ -31,6 +31,10 @@ public:
 	//returns percentage of metal reserves.
 	UFUNCTION(BlueprintPure)
 	float GetMetalReservePercent() const;
+	// checks if enough to cast allomantic ability.
+	bool CanCastAllomanticAction();
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
+	class UAllomanticComponent* AllomanticComponent;
 
 private:
 	void MoveForward(float AxisValue);
@@ -44,31 +48,11 @@ private:
 	void ReduceMetalReserve(float QuantToRemove);
 
 	//ACTIONS
-	// checks if enough to cast allomantic ability.
-	bool CanCastAllomanticAction();
-	//traces a line from the player's perspective, returns true if the line traced connects with a moveable object.
-	bool GetAllomanticLines(FHitResult& Hit);
-	// returns forward vector multiplied by ImpulseForce
-	FVector GetForceToApplyVector();
-	//if GetAllomanticLines is true, pushes the object and the player on opposite directions. Dependent on the mass.
-	void SteelPush();
-	//if GetAllomanticLines is true, pulls the object and the player toward each other. Dependent on the mass.
-	void IronPull();
-	//returns metal component of the hit object.
-	UMetalComponent* GetMetalComp(FHitResult Hit);
-	//return static mesh component of the hit object.
-	UStaticMeshComponent* GetMeshComp(FHitResult Hit);
 
 	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
-	void SteelIron(int Direction);
+	void TrySteelIron(int Direction);
 	template<int Direction>
-	void SteelIron();
-
-
-	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float TraceDistance = 2000.f;
-	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float ImpulseForce = 150.f;
+	void TrySteelIron();
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float MaxMetalReserve = 100.f;
@@ -81,6 +65,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DrainingRatio = 0.1;
 
+
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10;
 
@@ -89,7 +74,6 @@ private:
 
 	UPROPERTY()
 	AWeapon* Weapon;
-
 	
 
 };

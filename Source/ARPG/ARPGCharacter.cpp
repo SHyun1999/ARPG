@@ -4,9 +4,8 @@
 #include "ARPGCharacter.h"
 #include "Weapon.h"
 #include "DrawDebugHelpers.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "MetalComponent.h"
-#include "Misc/App.h"
+#include "AllomanticComponent.h"
 
 
 // Sets default values
@@ -14,6 +13,8 @@ AARPGCharacter::AARPGCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	AllomanticComponent = CreateDefaultSubobject<UAllomanticComponent>(TEXT("Allomantic component"));
+	AddOwnedComponent(AllomanticComponent);
 
 }
 
@@ -57,8 +58,8 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	//ACTIONS
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction(TEXT("SteelPush"), EInputEvent::IE_Pressed, this, &AARPGCharacter::SteelIron<1>);
-	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::SteelIron<-1>);
+	PlayerInputComponent->BindAction(TEXT("SteelPush"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<1>);
+	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<-1>);
 
 }
 
@@ -96,57 +97,27 @@ void AARPGCharacter::LookRightRate(float AxisValue)
 
 //////////////////////////////////////ABILITIES
 /////////////////////////////////////////////////////////////////////////
-FVector AARPGCharacter::GetForceToApplyVector()
-{
-	return this->GetActorForwardVector() * ImpulseForce;
-}
-
 bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
 {
-
-	const FVector Start = GetActorLocation();
-	
-	FCollisionQueryParams TraceParams;
-
-	AController* OwnerController = GetController();
-	if (OwnerController == nullptr) return false;
-	FVector Loc;
-	FRotator Rot;
-	OwnerController->GetPlayerViewPoint(Loc, Rot);//these are out params
-	
-	FVector End = Loc + Rot.Vector() * TraceDistance;
-	TraceParams.AddIgnoredActor(this);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, .5f);
-	return GetWorld()->LineTraceSingleByChannel(Hit,
-										Start,
-										End,
-										ECollisionChannel::ECC_Visibility, // check defaultengine.ini file to get bullet collision channel
-										TraceParams); 
-}
-
-void AARPGCharacter::SteelIron(int Direction)
-{
-	FHitResult Hit;
-	if (!CanCastAllomanticAction()) return;
-	if (GetAllomanticLines(Hit))
-	{
-		UStaticMeshComponent* MeshComponent = GetMeshComp(Hit);
-		UMetalComponent* MetalComponent = GetMetalComp(Hit);
-		if (MetalComponent && MeshComponent && Hit.GetActor()->IsRootComponentMovable())  //Check if is metal, and exists, and is movable.
-		{
-			if (MetalComponent->bIsAlluminum) return; //allomancy doesn't affect alluminum!
-			ReduceMetalReserve(AllomanticActionCost);
-			MeshComponent->AddImpulse(GetForceToApplyVector() * GetMesh()->GetMass() * Direction);
-			ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() * Direction * -1, false, true);
-		}
-	}
+	return AllomanticComponent->TraceAllomanticLines(Hit);
 }
 
 template <int Direction>
-void AARPGCharacter::SteelIron()
+void AARPGCharacter::TrySteelIron()
 {
-	SteelIron(Direction);
+	TrySteelIron(Direction);
 }
+
+void AARPGCharacter::TrySteelIron(int Direction)
+{
+
+	if (CanCastAllomanticAction())
+	{
+		AllomanticComponent->SteelIron(Direction);
+		ReduceMetalReserve(AllomanticActionCost);
+	}
+}
+
 
 //////////////////////////////////////METAL RESERVES
 /////////////////////////////////////////////////////////////////////////
@@ -164,16 +135,4 @@ void AARPGCharacter::ReduceMetalReserve(float QuantToRemove)
 bool AARPGCharacter::CanCastAllomanticAction()
 {
 	return AllomanticActionCost < CurrentMetalReserve;
-}
-
-//////////////////////////////////////Checkers
-/////////////////////////////////////////////////////////////////////////
-UMetalComponent* AARPGCharacter::GetMetalComp(FHitResult Hit)
-{
-	return Cast<UMetalComponent>(Hit.GetActor()->FindComponentByClass<UMetalComponent>());
-}
-
-UStaticMeshComponent* AARPGCharacter::GetMeshComp(FHitResult Hit) 
-{
-	return Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
 }
