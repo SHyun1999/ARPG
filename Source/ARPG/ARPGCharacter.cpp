@@ -97,7 +97,7 @@ void AARPGCharacter::LookRightRate(float AxisValue)
 
 //////////////////////////////////////ABILITIES
 /////////////////////////////////////////////////////////////////////////
-bool AARPGCharacter::GetAllomanticLines(FHitResult& Hit)
+bool AARPGCharacter::TryGetAllomanticLines(FHitResult& Hit)
 {
 	return AllomanticComponent->TraceAllomanticLines(Hit);
 }
@@ -111,11 +111,9 @@ void AARPGCharacter::TrySteelIron()
 void AARPGCharacter::TrySteelIron(int Direction)
 {
 
-	if (CanCastAllomanticAction())
-	{
-		AllomanticComponent->SteelIron(Direction);
-		ReduceMetalReserve(AllomanticActionCost);
-	}
+	if (!CanCastAllomanticAction()) return;
+	if (!AllomanticComponent->SteelIron(Direction)) return;
+	ReduceMetalReserve(AllomanticActionCost);
 }
 
 

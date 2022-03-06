@@ -27,7 +27,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	//traces a line from the player's perspective, returns true if the line traced connects with a moveable object.
 	bool TraceAllomanticLines(FHitResult& Hit);
-	void SteelIron(int Direction);
+	bool SteelIron(int Direction);
 
 private:
 	class AARPGCharacter* OwnerPawn;

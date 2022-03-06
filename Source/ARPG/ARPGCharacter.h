@@ -49,6 +49,8 @@ private:
 
 	//ACTIONS
 
+	bool TryGetAllomanticLines(FHitResult& Hit);
+
 	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
 	void TrySteelIron(int Direction);
 	template<int Direction>

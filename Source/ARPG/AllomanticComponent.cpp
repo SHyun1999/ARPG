@@ -67,7 +67,7 @@ FVector UAllomanticComponent::GetEndVector(AController* OwnerController)
 	return Loc + Rot.Vector() * TraceDistance;
 }
 
-void UAllomanticComponent::SteelIron(int Direction)
+bool UAllomanticComponent::SteelIron(int Direction)
 {
 	FHitResult Hit;
 	if (TraceAllomanticLines(Hit))
@@ -76,11 +76,14 @@ void UAllomanticComponent::SteelIron(int Direction)
 		UMetalComponent* MetalComponent = GetMetalComp(Hit);
 		if (MetalComponent && MeshComponent && Hit.GetActor()->IsRootComponentMovable())  //Check if is metal, and exists, and is movable.
 		{
-			if (MetalComponent->bIsAlluminum) return ; //allomancy doesn't affect alluminum!
+			if (MetalComponent->bIsAlluminum) return false ; //allomancy doesn't affect alluminum!
 			MeshComponent->AddImpulse(GetForceToApplyVector() * OwnerPawn->GetMesh()->GetMass() * Direction);
 			OwnerPawn->ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() * Direction * -1, false, true);
+			return true;
 		}
+		return false;
 	}
+	return false;
 }
 
 //////////////////////////////////////Getters
