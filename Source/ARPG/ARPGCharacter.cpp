@@ -36,6 +36,13 @@ void AARPGCharacter::Tick(float DeltaTime)
 
 	ReduceMetalReserve(DrainingRatio * DeltaTime);
 
+
+	if (bIsBurningMetal && !CanCastAllomanticAction(PewterActionCost))
+	{
+		ResetStrValue();
+		ResetDrainingRatio();
+		bIsBurningMetal = !bIsBurningMetal;
+	}
 }
 
 // Called to bind functionality to input
@@ -58,6 +65,8 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("SteelPush"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<1>);
 	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<-1>);
+	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryPewterBurn);
+	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
 
 }
 
@@ -104,11 +113,32 @@ void AARPGCharacter::TrySteelIron()
 
 void AARPGCharacter::TrySteelIron(int Direction)
 {
-	if (!CanCastAllomanticAction()) return;
+	if (!CanCastAllomanticAction(SteelIronActionCost)) return;
 	if (!AllomanticComponent->SteelIron(Direction)) return;
-	ReduceMetalReserve(AllomanticActionCost);
+	ReduceMetalReserve(SteelIronActionCost);
 }
 
+void AARPGCharacter::TryBurnMetal()
+{
+	if (!CanCastAllomanticAction(PewterActionCost)) return;
+	bIsBurningMetal = !bIsBurningMetal;
+
+	if (bIsBurningMetal) {
+		ReduceMetalReserve(PewterActionCost); //only reduce metal when starting action, not when cancelling it.
+	}
+	AllomanticComponent->BurnMetal();
+	
+}
+
+void AARPGCharacter::ResetDrainingRatio() 
+{
+	DrainingRatio = 0.1;
+}
+
+void AARPGCharacter::ResetStrValue()
+{
+	STR = 10;
+}
 
 //////////////////////////////////////METAL RESERVES
 /////////////////////////////////////////////////////////////////////////
@@ -123,7 +153,28 @@ void AARPGCharacter::ReduceMetalReserve(float QuantToRemove)
 	CurrentMetalReserve -= QuantToRemove;
 }
 
-bool AARPGCharacter::CanCastAllomanticAction()
+bool AARPGCharacter::CanCastAllomanticAction(int ActionCost)
 {
-	return AllomanticActionCost < CurrentMetalReserve;
+	return ActionCost < CurrentMetalReserve;
+}
+
+bool AARPGCharacter::CanDrinkVial()
+{
+	return bHasFlask && CurrentMetalReserve< MaxMetalReserve;
+}
+
+
+void AARPGCharacter::DrinkVial()
+{
+	CurrentMetalReserve = MaxMetalReserve;
+	bHasFlask = !bHasFlask;
+}
+
+void AARPGCharacter::DrinkDelay()
+{
+	if (CanDrinkVial())
+	{
+		GetWorldTimerManager().SetTimer(
+			UnusedHandle, this, &AARPGCharacter::DrinkVial, TimerDelay, false);
+	}
 }

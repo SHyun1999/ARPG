@@ -49,5 +49,4 @@ void APickableMetalVialActor::NotifyActorBeginOverlap(AActor* OtherActor)
 		Destroy();
 	}
 
-
 }

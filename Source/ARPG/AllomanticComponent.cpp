@@ -34,8 +34,22 @@ void UAllomanticComponent::BeginPlay()
 void UAllomanticComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
 
-	// ...
+void UAllomanticComponent::BurnMetal()
+{
+	if (!HasOwner()) return;
+
+	if (OwnerPawn->bIsBurningMetal)
+	{
+		OwnerPawn->DrainingRatio = OwnerPawn->DrainingRatio * PewterDrainingMultiplier; //refactor to multiply by either pewter or tin
+		OwnerPawn->STR = OwnerPawn->STR * PewterStrMultiplier;
+	}
+	else
+	{
+		OwnerPawn->ResetDrainingRatio();
+		OwnerPawn->ResetStrValue();
+	}
 }
 
 bool UAllomanticComponent::TraceAllomanticLines(FHitResult& Hit)

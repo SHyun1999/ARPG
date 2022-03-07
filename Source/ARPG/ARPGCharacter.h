@@ -32,13 +32,35 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetMetalReservePercent() const;
 	// checks if enough to cast allomantic ability.
-	bool CanCastAllomanticAction();
+	bool CanCastAllomanticAction(int ActionCost);
+	//checks if player can drink metal flask.
+	UFUNCTION(BlueprintPure)
+	bool CanDrinkVial();
+	//fills metal reserves
+	void DrinkVial();
+	//resets draining ratio value. TODO: Set variable
+	void ResetDrainingRatio();
+	//resets draining ratio value. TODO: Set variable
+	void ResetStrValue();
+
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UAllomanticComponent* AllomanticComponent;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	bool bHasFlask = false;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	bool bIsBurningMetal = false;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float DrainingRatio = 0.1;
 
+	//STATS VARIABLES
+	float STR = 10;
 private:
+
+	//FUNCTIONS
+	/////////////////////////////
+	
+	// MOVEMENT FUNCTIONS
 	void MoveForward(float AxisValue);
 	void MoveSide(float AxisValue);
 	void LookUp(float AxisValue);
@@ -47,35 +69,45 @@ private:
 	void LookUpRate(float AxisValue);
 	void LookRightRate(float AxisValue);
 
-	void ReduceMetalReserve(float QuantToRemove);
-
-	//ACTIONS
-
+	//ACTION FUNCTIONS
 	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
+	void ReduceMetalReserve(float QuantToRemove);
 	void TrySteelIron(int Direction);
 	template<int Direction>
 	void TrySteelIron();
+	//sets a delay to sync with drink animation.
+	void DrinkDelay();
 
+	//calls AllomanticComponent->PewterBurn
+	void TryBurnMetal();
+	//VARIABLES
+	/////////////////////////////
+	
+	//ALLOMANCY VARIABLES
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float MaxMetalReserve = 100.f;
+	float MaxMetalReserve = 100.f ;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float CurrentMetalReserve;
-
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float AllomanticActionCost = 10;
-
+	float SteelIronActionCost = 10;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float DrainingRatio = 0.001;
+	float PewterActionCost = 10;
 
-
+	//MOVEMENT VARIABLES
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10;
 
+	//DRINK DELAY VARIABLES
+	float TimerDelay = 4.5;
+	FTimerHandle UnusedHandle;
+
+	//WEAPON VARIABLES
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AWeapon> WeaponClass;
 
 	UPROPERTY()
 	AWeapon* Weapon;
+
 	
 
 };
