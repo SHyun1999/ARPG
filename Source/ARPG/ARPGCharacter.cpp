@@ -3,8 +3,6 @@
 
 #include "ARPGCharacter.h"
 #include "Weapon.h"
-#include "DrawDebugHelpers.h"
-#include "MetalComponent.h"
 #include "AllomanticComponent.h"
 
 
@@ -97,10 +95,6 @@ void AARPGCharacter::LookRightRate(float AxisValue)
 
 //////////////////////////////////////ABILITIES
 /////////////////////////////////////////////////////////////////////////
-bool AARPGCharacter::TryGetAllomanticLines(FHitResult& Hit)
-{
-	return AllomanticComponent->TraceAllomanticLines(Hit);
-}
 
 template <int Direction>
 void AARPGCharacter::TrySteelIron()
@@ -110,7 +104,6 @@ void AARPGCharacter::TrySteelIron()
 
 void AARPGCharacter::TrySteelIron(int Direction)
 {
-
 	if (!CanCastAllomanticAction()) return;
 	if (!AllomanticComponent->SteelIron(Direction)) return;
 	ReduceMetalReserve(AllomanticActionCost);

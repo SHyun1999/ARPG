@@ -36,6 +36,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UAllomanticComponent* AllomanticComponent;
 
+	bool bHasFlask = false;
+
 private:
 	void MoveForward(float AxisValue);
 	void MoveSide(float AxisValue);
@@ -48,8 +50,6 @@ private:
 	void ReduceMetalReserve(float QuantToRemove);
 
 	//ACTIONS
-
-	bool TryGetAllomanticLines(FHitResult& Hit);
 
 	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
 	void TrySteelIron(int Direction);
@@ -65,7 +65,7 @@ private:
 	float AllomanticActionCost = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float DrainingRatio = 0.1;
+	float DrainingRatio = 0.001;
 
 
 	UPROPERTY(EditAnywhere)
