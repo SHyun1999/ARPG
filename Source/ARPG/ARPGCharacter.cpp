@@ -4,7 +4,8 @@
 #include "ARPGCharacter.h"
 #include "Weapon.h"
 #include "AllomanticComponent.h"
-
+#include "ARPGCharacterController.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -14,6 +15,8 @@ AARPGCharacter::AARPGCharacter()
 	AllomanticComponent = CreateDefaultSubobject<UAllomanticComponent>(TEXT("Allomantic component"));
 	AddOwnedComponent(AllomanticComponent);
 
+
+	CharController = Cast<AARPGCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
 
 // Called when the game starts or when spawned
@@ -65,8 +68,11 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("SteelPush"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<1>);
 	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<-1>);
-	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryPewterBurn);
+	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal);
 	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
+
+	//DEBUGGING SCREEN
+	PlayerInputComponent->BindAction(TEXT("ToggleDebuggingScreen"), EInputEvent::IE_Pressed, this, &AARPGCharacter::ToggleDebuggingScreen);
 
 }
 
@@ -176,5 +182,16 @@ void AARPGCharacter::DrinkDelay()
 	{
 		GetWorldTimerManager().SetTimer(
 			UnusedHandle, this, &AARPGCharacter::DrinkVial, TimerDelay, false);
+	}
+}
+
+
+//////////////////////////////////////METAL RESERVES
+/////////////////////////////////////////////////////////////////////////
+void AARPGCharacter::ToggleDebuggingScreen()
+{
+	if (CharController)
+	{
+		CharController->ToggleDebugScreen();
 	}
 }

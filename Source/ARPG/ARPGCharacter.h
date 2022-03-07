@@ -8,6 +8,7 @@
 
 class AWeapon;
 class UMetalComponent;
+class  AARPGCharacterController;
 
 UCLASS()
 class ARPG_API AARPGCharacter : public ACharacter
@@ -59,6 +60,9 @@ private:
 
 	//FUNCTIONS
 	/////////////////////////////
+
+	//DEBUGGING
+	void ToggleDebuggingScreen();
 	
 	// MOVEMENT FUNCTIONS
 	void MoveForward(float AxisValue);
@@ -108,6 +112,8 @@ private:
 	UPROPERTY()
 	AWeapon* Weapon;
 
+	//DEBUGGING
+	AARPGCharacterController* CharController;
 	
 
 };

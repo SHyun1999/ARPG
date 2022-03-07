@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "ARPGCharacterController.generated.h"
 
+class UUSerWidget;
 /**
  * 
  */
@@ -16,8 +17,19 @@ class ARPG_API AARPGCharacterController : public APlayerController
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+public:
+	bool bIsShowingDebugScreen = false;
+
+	//enables or disables debugging screen
+	void ToggleDebugScreen();
 
 private:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> HUDClass;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> DebugScreenClass;
+
+	UUserWidget* DebugScreen;
+
 };
