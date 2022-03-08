@@ -53,6 +53,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DrainingRatio = 0.1;
 
+<<<<<<< HEAD
 	//returns current metal reserve
 	UFUNCTION(BlueprintPure)
 		float GetMetalReserve()const;
@@ -65,6 +66,8 @@ public:
 	UFUNCTION(BlueprintPure)
 		float GetDrainingRatio()const;
 
+=======
+>>>>>>> parent of d00ae34 (bind location, rotation, burning metals to debugging screen)
 	//STATS VARIABLES
 	float STR = 10;
 private:
