@@ -185,8 +185,22 @@ void AARPGCharacter::DrinkDelay()
 	}
 }
 
+float AARPGCharacter::GetMetalReserve()const
+{
+	return CurrentMetalReserve;
+}
 
-//////////////////////////////////////METAL RESERVES
+bool AARPGCharacter::IsBurningMetal()const
+{
+	return bIsBurningMetal;
+}
+
+float AARPGCharacter::GetDrainingRatio()const
+{
+	return DrainingRatio;
+}
+
+//////////////////////////////////////DEBUGGING
 /////////////////////////////////////////////////////////////////////////
 void AARPGCharacter::ToggleDebuggingScreen()
 {
@@ -194,12 +208,5 @@ void AARPGCharacter::ToggleDebuggingScreen()
 	{
 		CharController->ToggleDebugScreen();
 	}
-<<<<<<< HEAD
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> parent of d00ae34 (bind location, rotation, burning metals to debugging screen)
-=======
-}
->>>>>>> parent of d00ae34 (bind location, rotation, burning metals to debugging screen)
+
