@@ -185,8 +185,22 @@ void AARPGCharacter::DrinkDelay()
 	}
 }
 
+float AARPGCharacter::GetMetalReserve()const
+{
+	return CurrentMetalReserve;
+}
 
-//////////////////////////////////////METAL RESERVES
+bool AARPGCharacter::IsBurningMetal()const
+{
+	return bIsBurningMetal;
+}
+
+float AARPGCharacter::GetDrainingRatio()const
+{
+	return DrainingRatio;
+}
+
+//////////////////////////////////////DEBUGGING
 /////////////////////////////////////////////////////////////////////////
 void AARPGCharacter::ToggleDebuggingScreen()
 {
@@ -195,3 +209,4 @@ void AARPGCharacter::ToggleDebuggingScreen()
 		CharController->ToggleDebugScreen();
 	}
 }
+

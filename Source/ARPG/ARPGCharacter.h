@@ -54,6 +54,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DrainingRatio = 0.1;
 
+	//returns current metal reserve
+	UFUNCTION(BlueprintPure)
+	float GetMetalReserve()const;
+
+	//checks if currently burning metal
+	UFUNCTION(BlueprintPure)
+	bool IsBurningMetal()const;
+
+	//returns burning ratio
+	UFUNCTION(BlueprintPure)
+		float GetDrainingRatio()const;
+
 	//STATS VARIABLES
 	float STR = 10;
 private:
