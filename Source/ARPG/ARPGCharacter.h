@@ -54,6 +54,7 @@ public:
 	float DrainingRatio = 0.1;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//returns current metal reserve
 	UFUNCTION(BlueprintPure)
 		float GetMetalReserve()const;
@@ -66,6 +67,8 @@ public:
 	UFUNCTION(BlueprintPure)
 		float GetDrainingRatio()const;
 
+=======
+>>>>>>> parent of d00ae34 (bind location, rotation, burning metals to debugging screen)
 =======
 >>>>>>> parent of d00ae34 (bind location, rotation, burning metals to debugging screen)
 	//STATS VARIABLES
