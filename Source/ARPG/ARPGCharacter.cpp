@@ -209,4 +209,3 @@ void AARPGCharacter::ToggleDebuggingScreen()
 		CharController->ToggleDebugScreen();
 	}
 }
-

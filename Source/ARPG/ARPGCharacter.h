@@ -44,7 +44,6 @@ public:
 	//resets draining ratio value. TODO: Set variable
 	void ResetStrValue();
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UAllomanticComponent* AllomanticComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
@@ -56,11 +55,11 @@ public:
 
 	//returns current metal reserve
 	UFUNCTION(BlueprintPure)
-	float GetMetalReserve()const;
+		float GetMetalReserve()const;
 
 	//checks if currently burning metal
 	UFUNCTION(BlueprintPure)
-	bool IsBurningMetal()const;
+		bool IsBurningMetal()const;
 
 	//returns burning ratio
 	UFUNCTION(BlueprintPure)
