@@ -114,25 +114,30 @@ void AARPGCharacter::LookRightRate(float AxisValue)
 template <int Direction>
 void AARPGCharacter::TrySteelIron()
 {
+	NameOfLastAction = __func__;
 	TrySteelIron(Direction);
 }
 
 void AARPGCharacter::TrySteelIron(int Direction)
 {
-	if (!CanCastAllomanticAction(SteelIronActionCost)) return;
-	if (!AllomanticComponent->SteelIron(Direction)) return;
+	if (!CanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
+	if (!AllomanticComponent->SteelIron(Direction)) { bLastActionSuccess = false;  return; };
+	bLastActionSuccess = true;
 	ReduceMetalReserve(SteelIronActionCost);
+
 }
 
 void AARPGCharacter::TryBurnMetal()
 {
-	if (!CanCastAllomanticAction(PewterActionCost)) return;
+	NameOfLastAction = __func__;
+	if (!CanCastAllomanticAction(PewterActionCost)) { bLastActionSuccess = false;  return; };
 	bIsBurningMetal = !bIsBurningMetal;
 
 	if (bIsBurningMetal) {
 		ReduceMetalReserve(PewterActionCost); //only reduce metal when starting action, not when cancelling it.
 	}
 	AllomanticComponent->BurnMetal();
+	bLastActionSuccess = true;
 	
 }
 
@@ -210,3 +215,12 @@ void AARPGCharacter::ToggleDebuggingScreen()
 	}
 }
 
+FString AARPGCharacter::GetLastAction()
+{
+	return NameOfLastAction;
+}
+
+bool AARPGCharacter::CouldCastAction()
+{
+	return bLastActionSuccess;
+}

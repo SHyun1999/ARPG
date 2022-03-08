@@ -28,7 +28,7 @@ public:
 	//traces a line from the player's perspective, returns true if the line traced connects with a moveable object.
 	bool TraceAllomanticLines(FHitResult& Hit);
 	//increases metal burn rate, multiplies strength attribute.
-	void BurnMetal();
+	bool BurnMetal();
 
 	bool SteelIron(int Direction);
 

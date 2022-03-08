@@ -54,6 +54,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DrainingRatio = 0.1;
 
+
+	UPROPERTY(EditAnywhere, Category = "Debugging")
+	FString NameOfLastAction = "";
 	//returns current metal reserve
 	UFUNCTION(BlueprintPure)
 	float GetMetalReserve()const;
@@ -64,7 +67,12 @@ public:
 
 	//returns burning ratio
 	UFUNCTION(BlueprintPure)
-		float GetDrainingRatio()const;
+	float GetDrainingRatio()const;
+
+	UFUNCTION(BlueprintPure)
+	FString GetLastAction();
+	UFUNCTION(BlueprintPure)
+	bool CouldCastAction();
 
 	//STATS VARIABLES
 	float STR = 10;
@@ -126,6 +134,7 @@ private:
 
 	//DEBUGGING
 	AARPGCharacterController* CharController;
+	bool bLastActionSuccess;
 	
 
 };
