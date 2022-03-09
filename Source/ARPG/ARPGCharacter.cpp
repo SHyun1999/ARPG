@@ -68,7 +68,8 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("SteelPush"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<1>);
 	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<-1>);
-	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal);
+	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<1>);
+	PlayerInputComponent->BindAction(TEXT("TinBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<-1>);
 	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
 
 	//DEBUGGING SCREEN
@@ -127,16 +128,26 @@ void AARPGCharacter::TrySteelIron(int Direction)
 
 }
 
+template <int Direction>
 void AARPGCharacter::TryBurnMetal()
 {
 	NameOfLastAction = __func__;
-	if (!CanCastAllomanticAction(PewterActionCost)) { bLastActionSuccess = false;  return; };
+	TryBurnMetal(Direction);
+}
+
+void AARPGCharacter::TryBurnMetal(int Direction)
+{
+	float MetalToBurn;
+	if (Direction < 0) MetalToBurn = PewterActionCost;
+	if (Direction >= 0) MetalToBurn = TinActionCost;
+	if (!CanCastAllomanticAction(MetalToBurn)) { bLastActionSuccess = false;  return; };
 	bIsBurningMetal = !bIsBurningMetal;
 
-	if (bIsBurningMetal) {
-		ReduceMetalReserve(PewterActionCost); //only reduce metal when starting action, not when cancelling it.
+	if (bIsBurningMetal) 
+	{
+		ReduceMetalReserve(MetalToBurn); //only reduce metal when starting action, not when cancelling it.
 	}
-	AllomanticComponent->BurnMetal();
+	AllomanticComponent->BurnMetal(Direction);
 	bLastActionSuccess = true;
 	
 }

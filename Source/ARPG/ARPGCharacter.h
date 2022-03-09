@@ -94,15 +94,17 @@ private:
 	void LookRightRate(float AxisValue);
 
 	//ACTION FUNCTIONS
-	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
 	void ReduceMetalReserve(float QuantToRemove);
+	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
 	void TrySteelIron(int Direction);
 	template<int Direction>
 	void TrySteelIron();
 	//sets a delay to sync with drink animation.
 	void DrinkDelay();
 
-	//calls AllomanticComponent->PewterBurn
+	//calls AllomanticComponent->BurnMetal. pushes(pewter) if >0, pulls(tin) if <0.
+	void TryBurnMetal(int Direction);
+	template <int Direction>
 	void TryBurnMetal();
 	//VARIABLES
 	/////////////////////////////
@@ -115,7 +117,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float SteelIronActionCost = 10;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float PewterActionCost = 10;
+	float PewterActionCost = 5;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float TinActionCost = 3;
+
 
 	//MOVEMENT VARIABLES
 	UPROPERTY(EditAnywhere)

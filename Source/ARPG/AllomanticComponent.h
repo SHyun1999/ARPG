@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "AllomanticComponent.generated.h"
 
-
+class AStaticMeshActor;
 class UMetalComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -27,10 +27,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	//traces a line from the player's perspective, returns true if the line traced connects with a moveable object.
 	bool TraceAllomanticLines(FHitResult& Hit);
-	//increases metal burn rate, multiplies strength attribute.
-	bool BurnMetal();
+	//sets which metal is being burned.
+	bool BurnMetal(int Direction);
 
 	bool SteelIron(int Direction);
+	//increases metal burn rate, multiplies strength attribute.
+	void BurnPewter();
+	//HIGHLIGHTS which items allomancy can interact with
+	void BurnTin();
 
 private:
 	//checks if allomantic component has owner.
@@ -44,6 +48,8 @@ private:
 	//returns player location + rotation + trace distance.
 	FVector GetEndVector(AController* OwnerController);
 
+	void TraceTinLines();
+	bool bIsBurningTin = false;
 
 	class AARPGCharacter* OwnerPawn;
 
@@ -54,7 +60,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float PewterStrMultiplier = 1.8f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-		float PewterDrainingMultiplier = 5.f;
-
+		float PewterDrainingMultiplier = .3f;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+		float TinDrainingMultiplier = .2f;
 		
 };

@@ -6,6 +6,7 @@
 #include "ARPGCharacter.h"
 #include "DrawDebugHelpers.h"
 #include "MetalComponent.h"
+#include "Engine/StaticMeshActor.h"
 
 
 // Sets default values for this component's properties
@@ -34,24 +35,79 @@ void UAllomanticComponent::BeginPlay()
 void UAllomanticComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bIsBurningTin)
+	{
+		TraceTinLines();
+	}
 }
 
-bool UAllomanticComponent::BurnMetal()
+bool UAllomanticComponent::BurnMetal(int Direction)
 {
 	if (!HasOwner()) return false;
+	if (Direction >0)
+	{
+		BurnPewter();
+		return true;
+	}
+	else
+	{
+		BurnTin();
+		return true;
+	}
+	return false;
+}
+
+void UAllomanticComponent::BurnPewter()
+{
 
 	if (OwnerPawn->bIsBurningMetal)
 	{
-		OwnerPawn->DrainingRatio = OwnerPawn->DrainingRatio * PewterDrainingMultiplier; //refactor to multiply by either pewter or tin
+		OwnerPawn->DrainingRatio = OwnerPawn->DrainingRatio + PewterDrainingMultiplier;
 		OwnerPawn->STR = OwnerPawn->STR * PewterStrMultiplier;
-		return true;
+		return;
 	}
 	else
 	{
 		OwnerPawn->ResetDrainingRatio();
 		OwnerPawn->ResetStrValue();
-		return true;
+		return;
 	}
+}
+
+void UAllomanticComponent::BurnTin()
+{
+	if (OwnerPawn->bIsBurningMetal)
+	{
+		OwnerPawn->DrainingRatio = OwnerPawn->DrainingRatio + TinDrainingMultiplier;
+		bIsBurningTin = true;
+		return;
+	}
+	else
+	{
+		OwnerPawn->ResetDrainingRatio();
+		bIsBurningTin = false;
+		return;
+	}
+}
+
+void UAllomanticComponent::TraceTinLines() //maybe refactor to make more efficient
+{
+	if (!HasOwner()) return;
+		for (TObjectIterator<AStaticMeshActor> ObjectItr; ObjectItr; ++ObjectItr)
+		{
+			AStaticMeshActor* Actor = Cast<AStaticMeshActor>(*ObjectItr);
+			UMetalComponent* MetComp = Actor->FindComponentByClass<UMetalComponent>();
+			if (MetComp)
+			{
+				if (!MetComp->bIsAlluminum)
+				{
+					FVector Start = Actor->GetActorLocation();
+					FVector End = OwnerPawn->GetActorLocation();
+					DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0);
+				}
+			}
+		}
 }
 
 bool UAllomanticComponent::TraceAllomanticLines(FHitResult& Hit)
