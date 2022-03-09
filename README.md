@@ -1,3 +1,4 @@
 # ARPG
  An ARPG game with mistborn-inspired elements.
- Animations from bixammo.
+ It uses a push/pull based-system to affect the world around the player, checking for actors that have certain components.
+ Animations from Mixammo.
