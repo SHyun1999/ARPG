@@ -73,6 +73,14 @@ public:
 	FString GetLastAction();
 	UFUNCTION(BlueprintPure)
 	bool CouldCastAction();
+	
+	//returns strength value
+	UFUNCTION(BlueprintPure)
+	float GetSTR();
+
+	//sets strength value
+	UFUNCTION(BlueprintPure)
+	bool setSTR(float NewSTR);
 
 	//STATS VARIABLES
 	float STR = 10;
@@ -83,7 +91,7 @@ private:
 
 	//DEBUGGING
 	void ToggleDebuggingScreen();
-	
+
 	// MOVEMENT FUNCTIONS
 	void MoveForward(float AxisValue);
 	void MoveSide(float AxisValue);
@@ -106,6 +114,8 @@ private:
 	void TryBurnMetal(int Direction);
 	template <int Direction>
 	void TryBurnMetal();
+
+
 	//VARIABLES
 	/////////////////////////////
 	

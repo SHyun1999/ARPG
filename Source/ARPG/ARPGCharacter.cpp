@@ -235,3 +235,17 @@ bool AARPGCharacter::CouldCastAction()
 {
 	return bLastActionSuccess;
 }
+
+//////////////////////////////////////STATS
+/////////////////////////////////////////////////////////////////////////
+
+float AARPGCharacter::GetSTR()
+{
+	return STR;
+}
+
+bool AARPGCharacter::setSTR(float NewSTR)
+{
+	STR = NewSTR;
+	return true;
+}

@@ -60,8 +60,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float PewterStrMultiplier = 1.8f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-		float PewterDrainingMultiplier = .3f;
+		float PewterDrainingMultiplier = .5f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-		float TinDrainingMultiplier = .2f;
+		float TinDrainingMultiplier = .3f;
 		
 };
