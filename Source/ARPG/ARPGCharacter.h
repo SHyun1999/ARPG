@@ -53,10 +53,12 @@ public:
 	bool bIsBurningMetal = false;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DrainingRatio = 0.1;
-
-
 	UPROPERTY(EditAnywhere, Category = "Debugging")
 	FString NameOfLastAction = "";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+		bool bHasAttacked;
+
+
 	//returns current metal reserve
 	UFUNCTION(BlueprintPure)
 	float GetMetalReserve()const;
@@ -83,6 +85,7 @@ public:
 	bool setSTR(float NewSTR);
 
 	//STATS VARIABLES
+	UPROPERTY(EditAnywhere, Category="Combat")
 	float STR = 10;
 private:
 
@@ -114,6 +117,9 @@ private:
 	void TryBurnMetal(int Direction);
 	template <int Direction>
 	void TryBurnMetal();
+
+	//allows the character to attack
+	void Attack();
 
 
 	//VARIABLES

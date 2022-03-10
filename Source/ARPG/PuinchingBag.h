@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Weapon.generated.h"
+#include "PuinchingBag.generated.h"
 
 UCLASS()
-class ARPG_API AWeapon : public AActor
+class ARPG_API APuinchingBag : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AWeapon();
+	APuinchingBag();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,12 +22,17 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+protected:
+	UFUNCTION(BlueprintCallable)
+	void TakeDamage(float _Damage);
 
-	UPROPERTY(BlueprintReadWrite)
-		UStaticMeshComponent* Mesh;
-private: 
-	UPROPERTY(VisibleAnywhere)
-		USceneComponent* Root;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
+	float MaxHealth = 100;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
+	float CurrentHealth;
+
+	UFUNCTION(BlueprintPure)
+	float GetHealthPercent() const;
 
 };

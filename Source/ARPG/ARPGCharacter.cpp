@@ -15,7 +15,7 @@ AARPGCharacter::AARPGCharacter()
 	AllomanticComponent = CreateDefaultSubobject<UAllomanticComponent>(TEXT("Allomantic component"));
 	AddOwnedComponent(AllomanticComponent);
 
-
+	bHasAttacked = false;
 	CharController = Cast<AARPGCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
 
@@ -71,6 +71,7 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<1>);
 	PlayerInputComponent->BindAction(TEXT("TinBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<-1>);
 	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
+	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AARPGCharacter::Attack);
 
 	//DEBUGGING SCREEN
 	PlayerInputComponent->BindAction(TEXT("ToggleDebuggingScreen"), EInputEvent::IE_Pressed, this, &AARPGCharacter::ToggleDebuggingScreen);
@@ -151,6 +152,12 @@ void AARPGCharacter::TryBurnMetal(int Direction)
 	bLastActionSuccess = true;
 	
 }
+
+void AARPGCharacter::Attack()
+{
+	bHasAttacked = true;
+}
+
 
 void AARPGCharacter::ResetDrainingRatio() 
 {
