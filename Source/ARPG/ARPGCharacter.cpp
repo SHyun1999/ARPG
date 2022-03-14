@@ -70,6 +70,7 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<-1>);
 	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<1>);
 	PlayerInputComponent->BindAction(TEXT("TinBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<-1>);
+	PlayerInputComponent->BindAction(TEXT("DuraluminFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminFlare);
 	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
 	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AARPGCharacter::Attack);
 
@@ -122,11 +123,28 @@ void AARPGCharacter::TrySteelIron()
 
 void AARPGCharacter::TrySteelIron(int Direction)
 {
-	if (!CanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
+	if (!bDuraluminFlare)
+	{
+		if (!CanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
+	}
 	if (!AllomanticComponent->SteelIron(Direction)) { bLastActionSuccess = false;  return; };
+	bDuraluminFlare = false;
 	bLastActionSuccess = true;
 	ReduceMetalReserve(SteelIronActionCost);
 
+}
+
+void AARPGCharacter::TryDuraluminFlare()
+{
+	NameOfLastAction = __func__;
+	if (!CanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
+	bLastActionSuccess = true;
+	bDuraluminFlare = !bDuraluminFlare;
+	if (bDuraluminFlare)
+	{
+		SetDuraluminEnhancement();
+		DrainMetalReserves();
+	}
 }
 
 template <int Direction>
@@ -135,6 +153,7 @@ void AARPGCharacter::TryBurnMetal()
 	NameOfLastAction = __func__;
 	TryBurnMetal(Direction);
 }
+
 
 void AARPGCharacter::TryBurnMetal(int Direction)
 {
@@ -158,10 +177,14 @@ void AARPGCharacter::Attack()
 	bHasAttacked = true;
 }
 
-
-void AARPGCharacter::ResetDrainingRatio() 
+void AARPGCharacter::SetDuraluminEnhancement()
 {
-	DrainingRatio = 0.1;
+	DuraluminEnhancementMultiplier = CurrentMetalReserve * .03;
+}
+
+float AARPGCharacter::GetDuraluminEnhancement() const 
+{
+	return DuraluminEnhancementMultiplier;
 }
 
 void AARPGCharacter::ResetStrValue()
@@ -171,6 +194,12 @@ void AARPGCharacter::ResetStrValue()
 
 //////////////////////////////////////METAL RESERVES
 /////////////////////////////////////////////////////////////////////////
+
+void AARPGCharacter::ResetDrainingRatio() 
+{
+	DrainingRatio = 0.1;
+}
+
 float AARPGCharacter::GetMetalReservePercent() const
 {
 	return CurrentMetalReserve / MaxMetalReserve;
@@ -185,6 +214,11 @@ void AARPGCharacter::ReduceMetalReserve(float QuantToRemove)
 bool AARPGCharacter::CanCastAllomanticAction(int ActionCost)
 {
 	return ActionCost < CurrentMetalReserve;
+}
+
+void AARPGCharacter::DrainMetalReserves()
+{
+	CurrentMetalReserve = 0;
 }
 
 bool AARPGCharacter::CanDrinkVial()
@@ -208,6 +242,9 @@ void AARPGCharacter::DrinkDelay()
 	}
 }
 
+
+//////////////////////////////////////DEBUGGING
+/////////////////////////////////////////////////////////////////////////
 float AARPGCharacter::GetMetalReserve()const
 {
 	return CurrentMetalReserve;
@@ -223,8 +260,11 @@ float AARPGCharacter::GetDrainingRatio()const
 	return DrainingRatio;
 }
 
-//////////////////////////////////////DEBUGGING
-/////////////////////////////////////////////////////////////////////////
+bool AARPGCharacter::IsBurningDuralumin()const
+{
+	return bDuraluminFlare;
+}
+
 void AARPGCharacter::ToggleDebuggingScreen()
 {
 	if (CharController)

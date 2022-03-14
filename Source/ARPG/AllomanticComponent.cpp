@@ -70,6 +70,7 @@ void UAllomanticComponent::BurnPewter()
 	{
 		OwnerPawn->ResetDrainingRatio();
 		OwnerPawn->ResetStrValue();
+		bIsBurningTin = false;
 	}
 }
 
@@ -84,6 +85,7 @@ void UAllomanticComponent::BurnTin()
 	{
 		OwnerPawn->ResetDrainingRatio();
 		bIsBurningTin = false;
+		OwnerPawn->ResetStrValue();
 	}
 }
 
@@ -136,6 +138,10 @@ FVector UAllomanticComponent::GetEndVector(AController* OwnerController)
 
 bool UAllomanticComponent::SteelIron(int Direction)
 {
+	if (OwnerPawn->bDuraluminFlare)
+	{
+		return EnhancedSteelIron(Direction);
+	}
 	FHitResult Hit;
 	if (TraceAllomanticLines(Hit))
 	{
@@ -144,13 +150,36 @@ bool UAllomanticComponent::SteelIron(int Direction)
 		if (MetalComponent && MeshComponent && Hit.GetActor()->IsRootComponentMovable())  //Check if is metal, and exists, and is movable.
 		{
 			if (MetalComponent->bIsAlluminum) return false ; //allomancy doesn't affect alluminum!
-			MeshComponent->AddImpulse(GetForceToApplyVector() * OwnerPawn->GetMesh()->GetMass() * Direction);
-			OwnerPawn->ACharacter::LaunchCharacter(GetForceToApplyVector() * MeshComponent->GetMass() * Direction * -1, false, true);
+			MeshComponent->AddImpulse(GetForceToApplyVector(Hit.GetActor()) * (OwnerPawn->GetMesh()->GetMass()/2) * Direction);
+			OwnerPawn->ACharacter::LaunchCharacter(GetForceToApplyVector(Hit.GetActor()) * (MeshComponent->GetMass()/6) * Direction * -1, false, true);
 			return true;
 		}
 		return false;
 	}
 	return false;
+}
+
+bool UAllomanticComponent::EnhancedSteelIron(int Direction)
+{
+	for (TObjectIterator<AStaticMeshActor> ObjectItr; ObjectItr; ++ObjectItr)
+	{
+		AStaticMeshActor* Actor = Cast<AStaticMeshActor>(*ObjectItr);
+		UMetalComponent* MetComp = Actor->FindComponentByClass<UMetalComponent>();
+		if (MetComp)
+		{
+			if (!MetComp->bIsAlluminum)
+			{	
+				UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Actor->GetRootComponent());
+				MeshComponent->AddImpulse(GetForceToApplyVector(Actor) * OwnerPawn->GetMesh()->GetMass() * OwnerPawn->DuraluminEnhancementMultiplier * Direction);
+				LastActor = Actor;
+				LastMetalComponent = MeshComponent;
+			}
+			
+		}
+		
+	}
+	OwnerPawn->ACharacter::LaunchCharacter(GetForceToApplyVector(LastActor) * (LastMetalComponent->GetMass() / 8) * Direction * -1, false, true);
+	return true;
 }
 
 //////////////////////////////////////Getters
@@ -170,7 +199,11 @@ UStaticMeshComponent* UAllomanticComponent::GetMeshComp(FHitResult Hit)
 	return Cast<UStaticMeshComponent>(Hit.GetActor()->GetRootComponent());
 }
 
-FVector UAllomanticComponent::GetForceToApplyVector()
+FVector UAllomanticComponent::GetForceToApplyVector(AActor* Actor)
 {
-	return this->OwnerPawn->GetActorForwardVector() * ImpulseForce;
+	FVector Start = Actor->GetActorLocation();
+	FVector End = this->OwnerPawn->GetActorLocation();
+	
+	FVector ForceToApply = Start - End;
+	return ForceToApply * ImpulseForce;
 }

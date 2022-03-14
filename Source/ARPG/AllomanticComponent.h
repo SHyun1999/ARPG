@@ -44,24 +44,31 @@ private:
 	//return static mesh component of the hit object.
 	UStaticMeshComponent* GetMeshComp(FHitResult Hit);
 	// returns forward vector multiplied by ImpulseForce
-	FVector GetForceToApplyVector();
+	FVector GetForceToApplyVector(AActor* Actor);
 	//returns player location + rotation + trace distance.
 	FVector GetEndVector(AController* OwnerController);
 
+
+	bool EnhancedSteelIron(int Direction);
 	void TraceTinLines();
 	bool bIsBurningTin = false;
+
+
 
 	class AARPGCharacter* OwnerPawn;
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float TraceDistance = 3000.f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-		float ImpulseForce = 150.f;
+		float ImpulseForce = 2.f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float PewterStrMultiplier = 1.8f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float PewterDrainingMultiplier = .5f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float TinDrainingMultiplier = .3f;
-		
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	UStaticMeshComponent* LastMetalComponent;
+
+	AStaticMeshActor* LastActor;
 };

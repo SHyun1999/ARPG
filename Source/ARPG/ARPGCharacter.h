@@ -32,6 +32,9 @@ public:
 	//returns percentage of metal reserves.
 	UFUNCTION(BlueprintPure)
 	float GetMetalReservePercent() const;
+	//returns Duralumin enhancement multiplier
+	UFUNCTION(BlueprintPure)
+	float GetDuraluminEnhancement() const;
 	// checks if enough to cast allomantic ability.
 	bool CanCastAllomanticAction(int ActionCost);
 	//checks if player can drink metal flask.
@@ -43,6 +46,8 @@ public:
 	void ResetDrainingRatio();
 	//resets draining ratio value. TODO: Set variable
 	void ResetStrValue();
+	// multiplies current reserves by .03
+	void SetDuraluminEnhancement();
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
@@ -53,10 +58,12 @@ public:
 	bool bIsBurningMetal = false;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DrainingRatio = 0.1;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float DuraluminEnhancementMultiplier = 1;
 	UPROPERTY(EditAnywhere, Category = "Debugging")
 	FString NameOfLastAction = "";
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
-		bool bHasAttacked;
+	bool bHasAttacked;
 
 
 	//returns current metal reserve
@@ -66,6 +73,9 @@ public:
 	//checks if currently burning metal
 	UFUNCTION(BlueprintPure)
 	bool IsBurningMetal()const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsBurningDuralumin()const;
 
 	//returns burning ratio
 	UFUNCTION(BlueprintPure)
@@ -83,6 +93,10 @@ public:
 	//sets strength value
 	UFUNCTION(BlueprintPure)
 	bool setSTR(float NewSTR);
+	
+
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	bool bDuraluminFlare = false;
 
 	//STATS VARIABLES
 	UPROPERTY(EditAnywhere, Category="Combat")
@@ -112,6 +126,8 @@ private:
 	void TrySteelIron();
 	//sets a delay to sync with drink animation.
 	void DrinkDelay();
+	//greatly enhances next allomantic skill
+	void TryDuraluminFlare();
 
 	//calls AllomanticComponent->BurnMetal. pushes(pewter) if >0, pulls(tin) if <0.
 	void TryBurnMetal(int Direction);
@@ -121,6 +137,7 @@ private:
 	//allows the character to attack
 	void Attack();
 
+	void DrainMetalReserves();
 
 	//VARIABLES
 	/////////////////////////////
