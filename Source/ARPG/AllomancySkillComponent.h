@@ -22,26 +22,20 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
 	virtual bool CastAction(int Direction);
-	
-	void SetActionCost(float a);
-	float GetActionCost();
-
-	void SetToggleable(bool Toggleable);
-	bool GetToggleable();
 
 	class AARPGCharacter* OwnerPawn;
-	float ActionCost;
-	bool bIsToggleable;
 
+	//checks if allomantic component has owner.
 	bool HasOwner();
+	//returns metal component of the hit object.
 	UMetalComponent* GetMetalComp(FHitResult Hit);
+	//return static mesh component of the hit object.
 	UStaticMeshComponent* GetMeshComp(FHitResult Hit);
+	// returns forward vector multiplied by ImpulseForce
 	FVector GetForceToApplyVector(AActor* Actor);
-
+	//returns player location + rotation + trace distance.
 	FVector GetEndVector(AController* OwnerController);
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
@@ -56,5 +50,7 @@ public:
 		float TinDrainingMultiplier = .3f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		UStaticMeshComponent* LastMetalComponent;
+
+	AStaticMeshActor* LastActor;
 
 };

@@ -3,26 +3,31 @@
 
 #include "ARPGCharacter.h"
 #include "Weapon.h"
-#include "AllomanticComponent.h"
 #include "ARPGCharacterController.h"
 #include "Kismet/GameplayStatics.h"
 #include "MetalReserveComponent.h"
 #include "AllomancySkillComponent.h"
 #include "SteelIronComponent.h"
+#include "PewterTinComponent.h"
+#include "DuraluminAluminumComponent.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	AllomanticComponent = CreateDefaultSubobject<UAllomanticComponent>(TEXT("Allomantic component"));
-	AddOwnedComponent(AllomanticComponent);
 
 	MetalReserveComponent = CreateDefaultSubobject<UMetalReserveComponent>(TEXT("Metal reserve component"));
 	AddOwnedComponent(MetalReserveComponent);
 
 	SteelIronComponent = CreateDefaultSubobject<USteelIronComponent>(TEXT("Steel Iron component"));
 	AddOwnedComponent(SteelIronComponent);
+
+	PewterTinComponent = CreateDefaultSubobject<UPewterTinComponent>(TEXT("Pewter Tin component"));
+	AddOwnedComponent(PewterTinComponent);
+
+	DuraluminAluminumComponent = CreateDefaultSubobject<UDuraluminAluminumComponent>(TEXT("Duralumin Aluminum component"));
+	AddOwnedComponent(DuraluminAluminumComponent);
 
 	bHasAttacked = false;
 	CharController = Cast<AARPGCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -79,7 +84,8 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<-1>);
 	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<1>);
 	PlayerInputComponent->BindAction(TEXT("TinBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<-1>);
-	PlayerInputComponent->BindAction(TEXT("DuraluminFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminFlare);
+	PlayerInputComponent->BindAction(TEXT("DuraluminFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminAluminum<1>);
+	PlayerInputComponent->BindAction(TEXT("AluminumFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminAluminum<-1>);
 	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
 	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AARPGCharacter::Attack);
 
@@ -143,16 +149,31 @@ void AARPGCharacter::TrySteelIron(int Direction)
 
 }
 
-void AARPGCharacter::TryDuraluminFlare()
+
+template <int Direction>
+void AARPGCharacter::TryDuraluminAluminum()
 {
 	NameOfLastAction = __func__;
+	TryDuraluminAluminum(Direction);
+}
+
+void AARPGCharacter::TryDuraluminAluminum(int Direction)
+{
 	if (!TryCanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
 	bLastActionSuccess = true;
-	bDuraluminFlare = !bDuraluminFlare;
+	if (Direction < 0) 
+	{
+		DuraluminAluminumComponent->DrainMetalReserves();
+	}
+	if (Direction >= 0)
+	{
+		bDuraluminFlare = !bDuraluminFlare;
+		
+	}
 	if (bDuraluminFlare)
 	{
-		SetDuraluminEnhancement();
-		TryDrainMetalReserves();
+		DuraluminAluminumComponent->SetDuraluminEnhancement();
+		DuraluminAluminumComponent->DrainMetalReserves();
 	}
 }
 
@@ -176,7 +197,7 @@ void AARPGCharacter::TryBurnMetal(int Direction)
 	{
 		MetalReserveComponent->ReduceMetalReserve(MetalToBurn); //only reduce metal when starting action, not when cancelling it.
 	}
-	AllomanticComponent->BurnMetal(Direction);
+	PewterTinComponent->BurnMetal(Direction);
 	bLastActionSuccess = true;
 	
 }
@@ -184,11 +205,6 @@ void AARPGCharacter::TryBurnMetal(int Direction)
 void AARPGCharacter::Attack()
 {
 	bHasAttacked = true;
-}
-
-void AARPGCharacter::SetDuraluminEnhancement()
-{
-	DuraluminEnhancementMultiplier = CurrentMetalReserve * .03;
 }
 
 float AARPGCharacter::GetDuraluminEnhancement() const 

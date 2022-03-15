@@ -27,14 +27,6 @@ void UAllomancySkillComponent::BeginPlay()
 	
 }
 
-// Called every frame
-void UAllomancySkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 
 bool UAllomancySkillComponent::CastAction(int Direction)
 {
@@ -75,24 +67,4 @@ UStaticMeshComponent* UAllomancySkillComponent::GetMeshComp(FHitResult Hit)
 bool UAllomancySkillComponent::HasOwner()
 {
 	return OwnerPawn != nullptr;
-}
-
-void UAllomancySkillComponent::SetActionCost(float a)
-{
-	ActionCost = a;
-}
-
-float UAllomancySkillComponent::GetActionCost()
-{
-	return ActionCost;
-}
-
-void UAllomancySkillComponent::SetToggleable(bool Toggleable)
-{
-	bIsToggleable = Toggleable;
-}
-
-bool UAllomancySkillComponent::GetToggleable()
-{
-	return bIsToggleable;
 }

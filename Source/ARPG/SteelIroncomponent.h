@@ -10,7 +10,6 @@ UCLASS()
 class ARPG_API USteelIronComponent : public UAllomancySkillComponent
 {
 	GENERATED_BODY()
-
 	// Sets default values for this character's properties
 	USteelIronComponent();
 
@@ -19,4 +18,5 @@ public:
 	bool SteelIron(int Direction);
 private:
 	bool TraceAllomanticLines(FHitResult& Hit);
+	bool EnhancedSteelIron(int Direction);
 };

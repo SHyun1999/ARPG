@@ -47,10 +47,14 @@ public:
 	//resets draining ratio value.
 	void ResetStrValue();
 	// multiplies current reserves by .03
-	void SetDuraluminEnhancement();
+	void TrySetDuraluminEnhancement();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
-	class USteelIronComponent*  SteelIronComponent;
+	class UDuraluminAluminumComponent* DuraluminAluminumComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
+	class UPewterTinComponent* PewterTinComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
+	class USteelIronComponent* SteelIronComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UAllomanticComponent* AllomanticComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
@@ -140,6 +144,11 @@ private:
 	void TryBurnMetal(int Direction);
 	template <int Direction>
 	void TryBurnMetal();
+
+	template <int Direction>
+	void TryDuraluminAluminum();
+	void TryDuraluminAluminum(int Direction);
+
 
 	//allows the character to attack
 	void Attack();

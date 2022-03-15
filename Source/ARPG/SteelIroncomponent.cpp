@@ -13,9 +13,7 @@ USteelIronComponent::USteelIronComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-
 	PrimaryComponentTick.bCanEverTick = true;
-	OwnerPawn = Cast<AARPGCharacter>(GetOwner());
 	
 }
 
@@ -26,15 +24,13 @@ bool USteelIronComponent::CastAction(int Direction)
 
 bool USteelIronComponent::SteelIron(int Direction)
 {
-	UE_LOG(LogTemp, Warning, TEXT("POGGERS!!!!!!"));
-	if (!OwnerPawn) { UE_LOG(LogTemp, Warning, TEXT("not pog!!!!!!")); return false; }
+	if (!OwnerPawn)  return false; 
 	if (OwnerPawn->bDuraluminFlare)
 	{
-		//return EnhancedSteelIron(Direction);
+		return EnhancedSteelIron(Direction);
 		return false;
 	}
 	FHitResult Hit;
-	UE_LOG(LogTemp, Warning, TEXT("POGGERS AGAIN!!!!!!"));
 	if (TraceAllomanticLines(Hit))
 	{
 		UStaticMeshComponent* MeshComponent = GetMeshComp(Hit);
@@ -69,4 +65,25 @@ bool USteelIronComponent::TraceAllomanticLines(FHitResult& Hit)
 		End,
 		ECollisionChannel::ECC_Visibility, // check defaultengine.ini file to get bullet collision channel
 		TraceParams);
+}
+
+bool USteelIronComponent::EnhancedSteelIron(int Direction)
+{
+	for (TObjectIterator<AStaticMeshActor> ObjectItr; ObjectItr; ++ObjectItr)
+	{
+		AStaticMeshActor* Actor = Cast<AStaticMeshActor>(*ObjectItr);
+		UMetalComponent* MetComp = Actor->FindComponentByClass<UMetalComponent>();
+		if (MetComp)
+		{
+			if (!MetComp->bIsAlluminum)
+			{
+				UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Actor->GetRootComponent());
+				MeshComponent->AddImpulse(GetForceToApplyVector(Actor) * OwnerPawn->GetMesh()->GetMass() * OwnerPawn->DuraluminEnhancementMultiplier * Direction);
+				LastActor = Actor;
+				LastMetalComponent = MeshComponent;
+			}
+		}
+	}
+	OwnerPawn->ACharacter::LaunchCharacter(GetForceToApplyVector(LastActor) * (LastMetalComponent->GetMass() / 8) * Direction * -1, false, true);
+	return true;
 }
