@@ -3,7 +3,6 @@
 
 #include "AllomanticComponent.h"
 #include "ARPGCharacter.h"
-#include "ARPGCharacter.h"
 #include "DrawDebugHelpers.h"
 #include "MetalComponent.h"
 #include "Engine/StaticMeshActor.h"
@@ -68,7 +67,7 @@ void UAllomanticComponent::BurnPewter()
 	}
 	else
 	{
-		OwnerPawn->ResetDrainingRatio();
+		OwnerPawn->TryResetDrainingRatio();
 		OwnerPawn->ResetStrValue();
 		bIsBurningTin = false;
 	}
@@ -83,7 +82,7 @@ void UAllomanticComponent::BurnTin()
 	}
 	else
 	{
-		OwnerPawn->ResetDrainingRatio();
+		OwnerPawn->TryResetDrainingRatio();
 		bIsBurningTin = false;
 		OwnerPawn->ResetStrValue();
 	}
@@ -147,7 +146,7 @@ bool UAllomanticComponent::SteelIron(int Direction)
 	{
 		UStaticMeshComponent* MeshComponent = GetMeshComp(Hit);
 		UMetalComponent* MetalComponent = GetMetalComp(Hit);
-		if (MetalComponent && MeshComponent && Hit.GetActor()->IsRootComponentMovable())  //Check if is metal, and exists, and is movable.
+		if (MetalComponent && MeshComponent)  //Check if is metal, and exists, and is movable.
 		{
 			if (MetalComponent->bIsAlluminum) return false ; //allomancy doesn't affect alluminum!
 			MeshComponent->AddImpulse(GetForceToApplyVector(Hit.GetActor()) * (OwnerPawn->GetMesh()->GetMass()/2) * Direction);
@@ -174,9 +173,7 @@ bool UAllomanticComponent::EnhancedSteelIron(int Direction)
 				LastActor = Actor;
 				LastMetalComponent = MeshComponent;
 			}
-			
 		}
-		
 	}
 	OwnerPawn->ACharacter::LaunchCharacter(GetForceToApplyVector(LastActor) * (LastMetalComponent->GetMass() / 8) * Direction * -1, false, true);
 	return true;

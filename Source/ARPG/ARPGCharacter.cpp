@@ -6,6 +6,7 @@
 #include "AllomanticComponent.h"
 #include "ARPGCharacterController.h"
 #include "Kismet/GameplayStatics.h"
+#include "MetalReserveComponent.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -14,6 +15,9 @@ AARPGCharacter::AARPGCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	AllomanticComponent = CreateDefaultSubobject<UAllomanticComponent>(TEXT("Allomantic component"));
 	AddOwnedComponent(AllomanticComponent);
+
+	MetalReserveComponent = CreateDefaultSubobject<UMetalReserveComponent>(TEXT("Metal reserve component"));
+	AddOwnedComponent(MetalReserveComponent);
 
 	bHasAttacked = false;
 	CharController = Cast<AARPGCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -37,13 +41,13 @@ void AARPGCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ReduceMetalReserve(DrainingRatio * DeltaTime);
+	MetalReserveComponent->ReduceMetalReserve(DrainingRatio * DeltaTime);
 
 
-	if (bIsBurningMetal && !CanCastAllomanticAction(PewterActionCost))
+	if (bIsBurningMetal && !TryCanCastAllomanticAction(PewterActionCost))
 	{
 		ResetStrValue();
-		ResetDrainingRatio();
+		TryResetDrainingRatio();
 		bIsBurningMetal = !bIsBurningMetal;
 	}
 }
@@ -125,25 +129,25 @@ void AARPGCharacter::TrySteelIron(int Direction)
 {
 	if (!bDuraluminFlare)
 	{
-		if (!CanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
+		if (!TryCanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
 	}
 	if (!AllomanticComponent->SteelIron(Direction)) { bLastActionSuccess = false;  return; };
 	bDuraluminFlare = false;
 	bLastActionSuccess = true;
-	ReduceMetalReserve(SteelIronActionCost);
+	MetalReserveComponent->ReduceMetalReserve(SteelIronActionCost);
 
 }
 
 void AARPGCharacter::TryDuraluminFlare()
 {
 	NameOfLastAction = __func__;
-	if (!CanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
+	if (!TryCanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
 	bLastActionSuccess = true;
 	bDuraluminFlare = !bDuraluminFlare;
 	if (bDuraluminFlare)
 	{
 		SetDuraluminEnhancement();
-		DrainMetalReserves();
+		TryDrainMetalReserves();
 	}
 }
 
@@ -160,12 +164,12 @@ void AARPGCharacter::TryBurnMetal(int Direction)
 	float MetalToBurn;
 	if (Direction < 0) MetalToBurn = PewterActionCost;
 	if (Direction >= 0) MetalToBurn = TinActionCost;
-	if (!CanCastAllomanticAction(MetalToBurn)) { bLastActionSuccess = false;  return; };
+	if (!TryCanCastAllomanticAction(MetalToBurn)) { bLastActionSuccess = false;  return; };
 	bIsBurningMetal = !bIsBurningMetal;
 
 	if (bIsBurningMetal) 
 	{
-		ReduceMetalReserve(MetalToBurn); //only reduce metal when starting action, not when cancelling it.
+		MetalReserveComponent->ReduceMetalReserve(MetalToBurn); //only reduce metal when starting action, not when cancelling it.
 	}
 	AllomanticComponent->BurnMetal(Direction);
 	bLastActionSuccess = true;
@@ -195,37 +199,35 @@ void AARPGCharacter::ResetStrValue()
 //////////////////////////////////////METAL RESERVES
 /////////////////////////////////////////////////////////////////////////
 
-void AARPGCharacter::ResetDrainingRatio() 
+void AARPGCharacter::TryResetDrainingRatio() 
 {
-	DrainingRatio = 0.1;
+	MetalReserveComponent->ResetDrainingRatio();
 }
 
-float AARPGCharacter::GetMetalReservePercent() const
+float AARPGCharacter::TryGetMetalReservePercent() const
 {
-	return CurrentMetalReserve / MaxMetalReserve;
+	return MetalReserveComponent->GetMetalReservePercent();
 }
 
-void AARPGCharacter::ReduceMetalReserve(float QuantToRemove)
+void AARPGCharacter::TryReduceMetalReserve(float QuantToRemove)
 {
-	QuantToRemove = FMath::Min(CurrentMetalReserve, QuantToRemove);
-	CurrentMetalReserve -= QuantToRemove;
+	MetalReserveComponent->ReduceMetalReserve(QuantToRemove);
 }
 
-bool AARPGCharacter::CanCastAllomanticAction(int ActionCost)
+bool AARPGCharacter::TryCanCastAllomanticAction(int ActionCost)
 {
-	return ActionCost < CurrentMetalReserve;
+	return MetalReserveComponent->CanCastAllomanticAction(ActionCost);
 }
 
-void AARPGCharacter::DrainMetalReserves()
+void AARPGCharacter::TryDrainMetalReserves()
 {
-	CurrentMetalReserve = 0;
+	MetalReserveComponent->DrainMetalReserves();
 }
 
 bool AARPGCharacter::CanDrinkVial()
 {
-	return bHasFlask && CurrentMetalReserve< MaxMetalReserve;
+	return bHasFlask && CurrentMetalReserve < MaxMetalReserve;
 }
-
 
 void AARPGCharacter::DrinkVial()
 {
@@ -241,7 +243,6 @@ void AARPGCharacter::DrinkDelay()
 			UnusedHandle, this, &AARPGCharacter::DrinkVial, TimerDelay, false);
 	}
 }
-
 
 //////////////////////////////////////DEBUGGING
 /////////////////////////////////////////////////////////////////////////

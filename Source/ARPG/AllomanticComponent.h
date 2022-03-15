@@ -53,8 +53,6 @@ private:
 	void TraceTinLines();
 	bool bIsBurningTin = false;
 
-
-
 	class AARPGCharacter* OwnerPawn;
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")

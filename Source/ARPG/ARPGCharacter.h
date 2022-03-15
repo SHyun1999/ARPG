@@ -31,20 +31,20 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//returns percentage of metal reserves.
 	UFUNCTION(BlueprintPure)
-	float GetMetalReservePercent() const;
+	float TryGetMetalReservePercent() const;
 	//returns Duralumin enhancement multiplier
 	UFUNCTION(BlueprintPure)
 	float GetDuraluminEnhancement() const;
 	// checks if enough to cast allomantic ability.
-	bool CanCastAllomanticAction(int ActionCost);
+	bool TryCanCastAllomanticAction(int ActionCost);
 	//checks if player can drink metal flask.
 	UFUNCTION(BlueprintPure)
 	bool CanDrinkVial();
 	//fills metal reserves
 	void DrinkVial();
-	//resets draining ratio value. TODO: Set variable
-	void ResetDrainingRatio();
-	//resets draining ratio value. TODO: Set variable
+	//resets draining ratio value.
+	void TryResetDrainingRatio();
+	//resets draining ratio value.
 	void ResetStrValue();
 	// multiplies current reserves by .03
 	void SetDuraluminEnhancement();
@@ -52,6 +52,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UAllomanticComponent* AllomanticComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
+	class UMetalReserveComponent* MetalReserveComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	bool bHasFlask = false;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
@@ -101,6 +103,10 @@ public:
 	//STATS VARIABLES
 	UPROPERTY(EditAnywhere, Category="Combat")
 	float STR = 10;
+
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float CurrentMetalReserve;
+
 private:
 
 	//FUNCTIONS
@@ -119,7 +125,7 @@ private:
 	void LookRightRate(float AxisValue);
 
 	//ACTION FUNCTIONS
-	void ReduceMetalReserve(float QuantToRemove);
+	void TryReduceMetalReserve(float QuantToRemove);
 	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
 	void TrySteelIron(int Direction);
 	template<int Direction>
@@ -137,7 +143,7 @@ private:
 	//allows the character to attack
 	void Attack();
 
-	void DrainMetalReserves();
+	void TryDrainMetalReserves();
 
 	//VARIABLES
 	/////////////////////////////
@@ -145,8 +151,6 @@ private:
 	//ALLOMANCY VARIABLES
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float MaxMetalReserve = 100.f ;
-	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float CurrentMetalReserve;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float SteelIronActionCost = 10;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
