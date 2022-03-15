@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "AllomanticComponent.generated.h"
+#include "AllomancySkillComponent.generated.h"
 
 class AStaticMeshActor;
 class UMetalComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class ARPG_API UAllomanticComponent : public UActorComponent
+class ARPG_API UAllomancySkillComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UAllomanticComponent();
+	UAllomancySkillComponent();
 
 protected:
 	// Called when the game starts
@@ -25,34 +25,24 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	//traces a line from the player's perspective, returns true if the line traced connects with a moveable object.
-	bool TraceAllomanticLines(FHitResult& Hit);
-	//sets which metal is being burned.
-	bool BurnMetal(int Direction);
-	bool SteelIron(int Direction);
-	//increases metal burn rate, multiplies strength attribute.
-	void BurnPewter();
-	//HIGHLIGHTS which items allomancy can interact with
-	void BurnTin();
+	virtual bool CastAction(int Direction);
+	
+	void SetActionCost(float a);
+	float GetActionCost();
 
-private:
-	//checks if allomantic component has owner.
-	bool HasOwner();
-	//returns metal component of the hit object.
-	UMetalComponent* GetMetalComp(FHitResult Hit);
-	//return static mesh component of the hit object.
-	UStaticMeshComponent* GetMeshComp(FHitResult Hit);
-	// returns forward vector multiplied by ImpulseForce
-	FVector GetForceToApplyVector(AActor* Actor);
-	//returns player location + rotation + trace distance.
-	FVector GetEndVector(AController* OwnerController);
-
-
-	bool EnhancedSteelIron(int Direction);
-	void TraceTinLines();
-	bool bIsBurningTin = false;
+	void SetToggleable(bool Toggleable);
+	bool GetToggleable();
 
 	class AARPGCharacter* OwnerPawn;
+	float ActionCost;
+	bool bIsToggleable;
+
+	bool HasOwner();
+	UMetalComponent* GetMetalComp(FHitResult Hit);
+	UStaticMeshComponent* GetMeshComp(FHitResult Hit);
+	FVector GetForceToApplyVector(AActor* Actor);
+
+	FVector GetEndVector(AController* OwnerController);
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float TraceDistance = 3000.f;
@@ -65,7 +55,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float TinDrainingMultiplier = .3f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	UStaticMeshComponent* LastMetalComponent;
+		UStaticMeshComponent* LastMetalComponent;
 
-	AStaticMeshActor* LastActor;
 };

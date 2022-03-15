@@ -8,7 +8,7 @@
 
 class AWeapon;
 class UMetalComponent;
-class  AARPGCharacterController;
+class AARPGCharacterController;
 
 UCLASS()
 class ARPG_API AARPGCharacter : public ACharacter
@@ -49,7 +49,8 @@ public:
 	// multiplies current reserves by .03
 	void SetDuraluminEnhancement();
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
+	class USteelIronComponent*  SteelIronComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UAllomanticComponent* AllomanticComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")

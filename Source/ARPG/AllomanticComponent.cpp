@@ -202,5 +202,5 @@ FVector UAllomanticComponent::GetForceToApplyVector(AActor* Actor)
 	FVector End = this->OwnerPawn->GetActorLocation();
 	
 	FVector ForceToApply = Start - End;
-	return ForceToApply * ImpulseForce;
+	return ForceToApply + ImpulseForce;
 }

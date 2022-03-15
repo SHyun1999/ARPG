@@ -7,6 +7,8 @@
 #include "ARPGCharacterController.h"
 #include "Kismet/GameplayStatics.h"
 #include "MetalReserveComponent.h"
+#include "AllomancySkillComponent.h"
+#include "SteelIronComponent.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -18,6 +20,9 @@ AARPGCharacter::AARPGCharacter()
 
 	MetalReserveComponent = CreateDefaultSubobject<UMetalReserveComponent>(TEXT("Metal reserve component"));
 	AddOwnedComponent(MetalReserveComponent);
+
+	SteelIronComponent = CreateDefaultSubobject<USteelIronComponent>(TEXT("Steel Iron component"));
+	AddOwnedComponent(SteelIronComponent);
 
 	bHasAttacked = false;
 	CharController = Cast<AARPGCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -131,7 +136,7 @@ void AARPGCharacter::TrySteelIron(int Direction)
 	{
 		if (!TryCanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
 	}
-	if (!AllomanticComponent->SteelIron(Direction)) { bLastActionSuccess = false;  return; };
+	if (!SteelIronComponent->CastAction(Direction)) { bLastActionSuccess = false;  return; };
 	bDuraluminFlare = false;
 	bLastActionSuccess = true;
 	MetalReserveComponent->ReduceMetalReserve(SteelIronActionCost);
