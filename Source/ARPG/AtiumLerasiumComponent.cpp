@@ -3,6 +3,9 @@
 
 #include "AtiumLerasiumComponent.h"
 #include "ARPGCharacter.h"
+#include "TimerManager.h"
+#include "Kismet/GamePlayStatics.h"
+#include "MetalReserveComponent.h"
 
 // Sets default values for this component's properties
 UAtiumLerasiumComponent::UAtiumLerasiumComponent()
@@ -16,7 +19,16 @@ UAtiumLerasiumComponent::UAtiumLerasiumComponent()
 bool UAtiumLerasiumComponent::CastAction(int Direction, float DrainingMultiplier)
 {
 	Super::CastAction(Direction, DrainingMultiplier);
+	
 	return BurnMetal(Direction);
+
+}
+
+// Called every frame
+void UAtiumLerasiumComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
 
 }
 
@@ -25,17 +37,42 @@ bool UAtiumLerasiumComponent::BurnMetal(int Direction)
 	if (!HasOwner()) return false;
 	if (OwnerPawn->bIsBurningMetal)
 	{
+		bIsBurningAtium = !bIsBurningAtium;
+		float TimeDilation;
+		float CustomTimeDilation;
 		if (Direction > 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("CHAD ATIUM"));
-			return true;
+			TimeDilation = AtiumTimeDilation;
+			CustomTimeDilation = AtiumCustomTime;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("VIRGIN LERASIUM"));
-			return false;
+			TimeDilation = LerasiumTimeDilation;
+			CustomTimeDilation = 1.f;
 		}
+		if (bIsBurningAtium) 
+		{
+			BurnAtiumLerasium(TimeDilation, CustomTimeDilation);
+		}
+		else
+		{
+			StopBurnAtiumLerasium();
+		}
+		return true;
 
 	}
 	return false;
+}
+
+void UAtiumLerasiumComponent::BurnAtiumLerasium(float TimeDilation, float CustomTimeDilation)
+{
+	bIsBurningAtium = true;
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);
+	OwnerPawn->CustomTimeDilation = CustomTimeDilation;
+}
+
+void UAtiumLerasiumComponent::StopBurnAtiumLerasium()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	OwnerPawn->CustomTimeDilation = 1;
 }

@@ -179,7 +179,7 @@ private:
 	float AtiumActionCost = 3;
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-	float AtiumDrainingMultiplier = 1.9f;
+	float AtiumDrainingMultiplier = 2.4f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float PewterDrainingMultiplier = .5f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")

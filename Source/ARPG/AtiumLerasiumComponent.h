@@ -17,7 +17,16 @@ class ARPG_API UAtiumLerasiumComponent : public UAllomancySkillComponent
 public:
 	bool CastAction(int Direction, float DrainingMultiplier)override;
 
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 private:
 	bool BurnMetal(int Direction);
+	void BurnAtiumLerasium(float TimeDilation, float CustomTimeDilation);
+	void StopBurnAtiumLerasium();
+
+	const float AtiumTimeDilation = .35f;
+	const float AtiumCustomTime = 2.6f;
+	const float LerasiumTimeDilation = 1.55f;
 
 };

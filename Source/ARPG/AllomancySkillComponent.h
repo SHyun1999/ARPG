@@ -46,9 +46,11 @@ public:
 		float PewterStrMultiplier = 1.8f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		UStaticMeshComponent* LastMetalComponent;
+
 	AStaticMeshActor* LastActor;
 
 	bool bIsToggleable;
 	bool bIsBurningTin = false;
+	bool bIsBurningAtium = false;
 
 };

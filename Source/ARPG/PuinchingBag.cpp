@@ -24,6 +24,7 @@ void APuinchingBag::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
 }
 
 void APuinchingBag::TakeDamage(float _DamageToTake)

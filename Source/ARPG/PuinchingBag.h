@@ -29,10 +29,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
 	float MaxHealth = 100;
 
+	UPROPERTY(EditAnywhere, Category = "EnemyStats")
+	bool bIsMoving = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyStats")
 	float CurrentHealth;
 
 	UFUNCTION(BlueprintPure)
 	float GetHealthPercent() const;
+
+	float RunningTime;
 
 };
