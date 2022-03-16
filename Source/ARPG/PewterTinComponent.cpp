@@ -7,6 +7,22 @@
 #include "MetalComponent.h"
 #include "Engine/StaticMeshActor.h"
 
+
+// Sets default values for this component's properties
+UPewterTinComponent::UPewterTinComponent()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
+	bIsToggleable = true;
+}
+
+bool UPewterTinComponent::CastAction(int Direction, float DrainingMultiplier)
+{
+	Super::CastAction(Direction, DrainingMultiplier);
+	return(BurnMetal(Direction));
+}
+
 // Called every frame
 void UPewterTinComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -21,48 +37,31 @@ void UPewterTinComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 bool UPewterTinComponent::BurnMetal(int Direction)
 {
 	if (!HasOwner()) return false;
-	if (Direction > 0)
+	if (OwnerPawn->bIsBurningMetal) 
 	{
-		BurnPewter();
-		return true;
-	}
-	else
-	{
-		BurnTin();
-		return true;
+		if (Direction > 0)
+		{
+			return BurnPewter();
+		}
+		else
+		{
+			return BurnTin();
+		}
+
 	}
 	return false;
 }
 
-void UPewterTinComponent::BurnPewter()
+bool UPewterTinComponent::BurnPewter()
 {
-
-	if (OwnerPawn->bIsBurningMetal)
-	{
-		OwnerPawn->DrainingRatio = OwnerPawn->DrainingRatio + PewterDrainingMultiplier;
-		OwnerPawn->setSTR(OwnerPawn->STR * PewterStrMultiplier);
-	}
-	else
-	{
-		OwnerPawn->TryResetDrainingRatio();
-		OwnerPawn->ResetStrValue();
-		bIsBurningTin = false;
-	}
+	OwnerPawn->setSTR(OwnerPawn->STR * PewterStrMultiplier);
+	return true;
 }
 
-void UPewterTinComponent::BurnTin()
+bool UPewterTinComponent::BurnTin()
 {
-	if (OwnerPawn->bIsBurningMetal)
-	{
-		OwnerPawn->DrainingRatio = OwnerPawn->DrainingRatio + TinDrainingMultiplier;
-		bIsBurningTin = true;
-	}
-	else
-	{
-		OwnerPawn->TryResetDrainingRatio();
-		bIsBurningTin = false;
-		OwnerPawn->ResetStrValue();
-	}
+	bIsBurningTin = true;
+	return bIsBurningTin;
 }
 
 void UPewterTinComponent::TraceTinLines() //maybe refactor to make more efficient

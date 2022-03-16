@@ -141,9 +141,9 @@ private:
 	void TryDuraluminFlare();
 
 	//calls AllomanticComponent->BurnMetal. pushes(pewter) if >0, pulls(tin) if <0.
-	void TryBurnMetal(int Direction);
+	void TryPewterTin(int Direction);
 	template <int Direction>
-	void TryBurnMetal();
+	void TryPewterTin();
 
 	template <int Direction>
 	void TryDuraluminAluminum();
@@ -168,6 +168,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float TinActionCost = 3;
 
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+		float PewterDrainingMultiplier = .5f;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+		float TinDrainingMultiplier = .3f;
+	float DrainingMultiplierToApply;
 
 	//MOVEMENT VARIABLES
 	UPROPERTY(EditAnywhere)

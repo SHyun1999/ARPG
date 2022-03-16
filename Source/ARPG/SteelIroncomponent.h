@@ -14,7 +14,7 @@ class ARPG_API USteelIronComponent : public UAllomancySkillComponent
 	USteelIronComponent();
 
 public:
-	virtual bool CastAction(int Direction) override;
+	virtual bool CastAction(int Direction, float DrainingMultiplier) override;
 	bool SteelIron(int Direction);
 private:
 	bool TraceAllomanticLines(FHitResult& Hit);

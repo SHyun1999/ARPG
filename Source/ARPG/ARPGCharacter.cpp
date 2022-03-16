@@ -82,8 +82,8 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("SteelPush"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<1>);
 	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<-1>);
-	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<1>);
-	PlayerInputComponent->BindAction(TEXT("TinBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBurnMetal<-1>);
+	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryPewterTin<1>);
+	PlayerInputComponent->BindAction(TEXT("TinBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryPewterTin<-1>);
 	PlayerInputComponent->BindAction(TEXT("DuraluminFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminAluminum<1>);
 	PlayerInputComponent->BindAction(TEXT("AluminumFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminAluminum<-1>);
 	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
@@ -142,7 +142,7 @@ void AARPGCharacter::TrySteelIron(int Direction)
 	{
 		if (!TryCanCastAllomanticAction(SteelIronActionCost)) { bLastActionSuccess = false;  return; };
 	}
-	if (!SteelIronComponent->CastAction(Direction)) { bLastActionSuccess = false;  return; };
+	if (!SteelIronComponent->CastAction(Direction, 0.f)) { bLastActionSuccess = false;  return; };
 	bDuraluminFlare = false;
 	bLastActionSuccess = true;
 	MetalReserveComponent->ReduceMetalReserve(SteelIronActionCost);
@@ -178,18 +178,26 @@ void AARPGCharacter::TryDuraluminAluminum(int Direction)
 }
 
 template <int Direction>
-void AARPGCharacter::TryBurnMetal()
+void AARPGCharacter::TryPewterTin()
 {
 	NameOfLastAction = __func__;
-	TryBurnMetal(Direction);
+	TryPewterTin(Direction);
 }
 
 
-void AARPGCharacter::TryBurnMetal(int Direction)
+void AARPGCharacter::TryPewterTin(int Direction)
 {
 	float MetalToBurn;
-	if (Direction < 0) MetalToBurn = PewterActionCost;
-	if (Direction >= 0) MetalToBurn = TinActionCost;
+	if (Direction < 0)
+	{
+		MetalToBurn = PewterActionCost;
+		DrainingMultiplierToApply = PewterDrainingMultiplier;
+	}else
+	{
+		DrainingMultiplierToApply = TinDrainingMultiplier;
+		MetalToBurn = TinActionCost;
+	}
+
 	if (!TryCanCastAllomanticAction(MetalToBurn)) { bLastActionSuccess = false;  return; };
 	bIsBurningMetal = !bIsBurningMetal;
 
@@ -197,7 +205,7 @@ void AARPGCharacter::TryBurnMetal(int Direction)
 	{
 		MetalReserveComponent->ReduceMetalReserve(MetalToBurn); //only reduce metal when starting action, not when cancelling it.
 	}
-	PewterTinComponent->BurnMetal(Direction);
+	PewterTinComponent->CastAction(Direction, DrainingMultiplierToApply);
 	bLastActionSuccess = true;
 	
 }

@@ -22,21 +22,27 @@ UAllomancySkillComponent::UAllomancySkillComponent()
 void UAllomancySkillComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
-
-bool UAllomancySkillComponent::CastAction(int Direction)
+bool UAllomancySkillComponent::CastAction(int Direction, float DrainingMultiplier)
 {
+	if (OwnerPawn->bIsBurningMetal)
+	{
+		OwnerPawn->DrainingRatio = OwnerPawn->DrainingRatio + DrainingMultiplier;
+	}
+	else if (!OwnerPawn->bIsBurningMetal)
+	{
+		OwnerPawn->TryResetDrainingRatio();
+		OwnerPawn->ResetStrValue();
+		bIsBurningTin = false;
+	}
 	return true;
 }
 
 FVector UAllomancySkillComponent::GetForceToApplyVector(AActor* Actor)
 {
 	FVector Start = Actor->GetActorLocation();
-	FVector End = this->OwnerPawn->GetActorLocation();
+	FVector End = OwnerPawn->GetActorLocation();
 
 	FVector ForceToApply = Start - End;
 	return ForceToApply + ImpulseForce;

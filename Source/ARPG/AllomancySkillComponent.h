@@ -23,7 +23,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual bool CastAction(int Direction);
+	virtual bool CastAction(int Direction, float DrainingMultiplier);
 
 	class AARPGCharacter* OwnerPawn;
 
@@ -45,12 +45,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float PewterStrMultiplier = 1.8f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-		float PewterDrainingMultiplier = .5f;
-	UPROPERTY(EditAnywhere, Category = "Allomancy")
-		float TinDrainingMultiplier = .3f;
-	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		UStaticMeshComponent* LastMetalComponent;
-
 	AStaticMeshActor* LastActor;
+
+	bool bIsToggleable;
+	bool bIsBurningTin = false;
 
 };

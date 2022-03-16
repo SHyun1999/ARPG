@@ -13,6 +13,8 @@ UCLASS()
 class ARPG_API UDuraluminAluminumComponent : public UAllomancySkillComponent
 {
 	GENERATED_BODY()
+	// Sets default values for this character's properties
+	UDuraluminAluminumComponent();
 	
 public:
 	void SetDuraluminEnhancement();

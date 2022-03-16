@@ -14,19 +14,20 @@ class ARPG_API UPewterTinComponent : public UAllomancySkillComponent
 {
 	GENERATED_BODY()
 
+	UPewterTinComponent();
+
 public:
+	bool CastAction(int Direction, float DrainingMultiplier)override;
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	//sets which metal is being burned.
 	bool BurnMetal(int Direction);
 	//increases metal burn rate, multiplies strength attribute.
-	void BurnPewter();
+	bool BurnPewter();
 	//HIGHLIGHTS which items allomancy can interact with
-	void BurnTin();
+	bool BurnTin();
 private:
-
-	bool bIsBurningTin = false;
 	void TraceTinLines();
 
 };

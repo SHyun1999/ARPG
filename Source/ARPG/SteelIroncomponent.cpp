@@ -14,11 +14,12 @@ USteelIronComponent::USteelIronComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	
+	bIsToggleable = false;
 }
 
-bool USteelIronComponent::CastAction(int Direction)
+bool USteelIronComponent::CastAction(int Direction,float DrainingMultiplier)
 {
+	Super::CastAction(Direction, DrainingMultiplier);
 	return(SteelIron(Direction));
 }
 
