@@ -48,7 +48,9 @@ public:
 	void ResetStrValue();
 	// multiplies current reserves by .03
 	void TrySetDuraluminEnhancement();
-
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
+	class UAtiumLerasiumComponent* AtiumLerasiumComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UDuraluminAluminumComponent* DuraluminAluminumComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
@@ -131,19 +133,25 @@ private:
 
 	//ACTION FUNCTIONS
 	void TryReduceMetalReserve(float QuantToRemove);
-	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
-	void TrySteelIron(int Direction);
-	template<int Direction>
-	void TrySteelIron();
 	//sets a delay to sync with drink animation.
 	void DrinkDelay();
 	//greatly enhances next allomantic skill
 	void TryDuraluminFlare();
 
-	//calls AllomanticComponent->BurnMetal. pushes(pewter) if >0, pulls(tin) if <0.
+	//if GetAllomanticLines is true, pushes if >0, pulls if <0.
+	void TrySteelIron(int Direction);
+	template<int Direction>
+	void TrySteelIron();
+
+	// pushes(pewter) if >0, pulls(tin) if <0.
 	void TryPewterTin(int Direction);
 	template <int Direction>
 	void TryPewterTin();
+
+	// pushes(Atium) if >0, pulls(lerasium) if <0.
+	void TryAtiumLerasium(int Direction);
+	template <int Direction>
+	void TryAtiumLerasium();
 
 	template <int Direction>
 	void TryDuraluminAluminum();
@@ -167,11 +175,15 @@ private:
 	float PewterActionCost = 5;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float TinActionCost = 3;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float AtiumActionCost = 3;
 
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-		float PewterDrainingMultiplier = .5f;
+	float AtiumDrainingMultiplier = 1.9f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
-		float TinDrainingMultiplier = .3f;
+	float PewterDrainingMultiplier = .5f;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	float TinDrainingMultiplier = .3f;
 	float DrainingMultiplierToApply;
 
 	//MOVEMENT VARIABLES

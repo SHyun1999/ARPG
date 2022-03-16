@@ -10,6 +10,7 @@
 #include "SteelIronComponent.h"
 #include "PewterTinComponent.h"
 #include "DuraluminAluminumComponent.h"
+#include "AtiumLerasiumComponent.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -28,6 +29,9 @@ AARPGCharacter::AARPGCharacter()
 
 	DuraluminAluminumComponent = CreateDefaultSubobject<UDuraluminAluminumComponent>(TEXT("Duralumin Aluminum component"));
 	AddOwnedComponent(DuraluminAluminumComponent);
+
+	AtiumLerasiumComponent = CreateDefaultSubobject<UAtiumLerasiumComponent>(TEXT("Atium Lerasium component"));
+	AddOwnedComponent(AtiumLerasiumComponent);
 
 	bHasAttacked = false;
 	CharController = Cast<AARPGCharacterController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -84,6 +88,8 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("IronPull"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TrySteelIron<-1>);
 	PlayerInputComponent->BindAction(TEXT("PewterBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryPewterTin<1>);
 	PlayerInputComponent->BindAction(TEXT("TinBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryPewterTin<-1>);
+	PlayerInputComponent->BindAction(TEXT("AtiumBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryAtiumLerasium<1>);
+	PlayerInputComponent->BindAction(TEXT("LerasiumBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryAtiumLerasium<-1>);
 	PlayerInputComponent->BindAction(TEXT("DuraluminFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminAluminum<1>);
 	PlayerInputComponent->BindAction(TEXT("AluminumFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminAluminum<-1>);
 	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
@@ -207,7 +213,38 @@ void AARPGCharacter::TryPewterTin(int Direction)
 	}
 	PewterTinComponent->CastAction(Direction, DrainingMultiplierToApply);
 	bLastActionSuccess = true;
-	
+}
+
+template <int Direction>
+void AARPGCharacter::TryAtiumLerasium()
+{
+	NameOfLastAction = __func__;
+	TryAtiumLerasium(Direction);
+}
+
+void AARPGCharacter::TryAtiumLerasium(int Direction)
+{
+	float MetalToBurn;
+	if (Direction < 0)
+	{
+		DrainingMultiplierToApply = TinDrainingMultiplier; // TODO CHANGE TO LERASIUM VALUES
+		MetalToBurn = TinActionCost;
+	}
+	else
+	{
+		MetalToBurn = AtiumActionCost;
+		DrainingMultiplierToApply = AtiumDrainingMultiplier;
+	}
+
+	if (!TryCanCastAllomanticAction(MetalToBurn)) { bLastActionSuccess = false;  return; };
+	bIsBurningMetal = !bIsBurningMetal;
+
+	if (bIsBurningMetal)
+	{
+		MetalReserveComponent->ReduceMetalReserve(MetalToBurn); //only reduce metal when starting action, not when cancelling it.
+	}
+	AtiumLerasiumComponent->CastAction(Direction, DrainingMultiplierToApply);
+	bLastActionSuccess = true;
 }
 
 void AARPGCharacter::Attack()

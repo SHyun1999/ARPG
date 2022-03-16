@@ -21,13 +21,13 @@ public:
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+private:
 	//sets which metal is being burned.
 	bool BurnMetal(int Direction);
 	//increases metal burn rate, multiplies strength attribute.
 	bool BurnPewter();
 	//HIGHLIGHTS which items allomancy can interact with
 	bool BurnTin();
-private:
 	void TraceTinLines();
 
 };
