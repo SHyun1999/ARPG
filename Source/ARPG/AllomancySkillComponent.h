@@ -38,6 +38,7 @@ public:
 	//returns player location + rotation + trace distance.
 	FVector GetEndVector(AController* OwnerController);
 
+		void ResetTime();
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 		float TraceDistance = 3000.f;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
@@ -52,5 +53,7 @@ public:
 	bool bIsToggleable;
 	bool bIsBurningTin = false;
 	bool bIsBurningAtium = false;
+	bool bIsBurningCopper= false;
+	bool bIsBurningBronze = false;
 
 };

@@ -76,7 +76,7 @@ void UPewterTinComponent::TraceTinLines() //maybe refactor to make more efficien
 			{
 				FVector Start = Actor->GetActorLocation();
 				FVector End = OwnerPawn->GetActorLocation();
-				DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 0);
+				DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, .1f);
 			}
 		}
 	}

@@ -49,6 +49,9 @@ public:
 	// multiplies current reserves by .03
 	void TrySetDuraluminEnhancement();
 	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
+	class UBronzeCopperComponent* BronzeCopperComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UAtiumLerasiumComponent* AtiumLerasiumComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
@@ -58,13 +61,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class USteelIronComponent* SteelIronComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
-	class UAllomanticComponent* AllomanticComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UMetalReserveComponent* MetalReserveComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	bool bHasFlask = false;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	bool bIsBurningMetal = false;
+	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	bool bIsHiddingPulses = false;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DrainingRatio = 0.1;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
@@ -157,6 +160,10 @@ private:
 	void TryDuraluminAluminum();
 	void TryDuraluminAluminum(int Direction);
 
+	template <int Direction>
+	void TryBronzeSearch();
+	void TryBronzeSearch(int Direction);
+
 
 	//allows the character to attack
 	void Attack();
@@ -185,7 +192,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float TinDrainingMultiplier = .3f;
 	float DrainingMultiplierToApply;
-
 	//MOVEMENT VARIABLES
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10;
@@ -200,6 +206,7 @@ private:
 
 	UPROPERTY()
 	AWeapon* Weapon;
+
 
 	//DEBUGGING
 	AARPGCharacterController* CharController;

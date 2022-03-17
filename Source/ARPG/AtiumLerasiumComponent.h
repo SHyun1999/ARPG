@@ -23,7 +23,6 @@ public:
 private:
 	bool BurnMetal(int Direction);
 	void BurnAtiumLerasium(float TimeDilation, float CustomTimeDilation);
-	void StopBurnAtiumLerasium();
 
 	const float AtiumTimeDilation = .35f;
 	const float AtiumCustomTime = 2.6f;

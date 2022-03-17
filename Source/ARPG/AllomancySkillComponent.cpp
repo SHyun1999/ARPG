@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "MetalComponent.h"
 #include "Engine/StaticMeshActor.h"
+#include "Kismet/GamePlayStatics.h"
 
 // Sets default values for this component's properties
 UAllomancySkillComponent::UAllomancySkillComponent()
@@ -29,12 +30,16 @@ bool UAllomancySkillComponent::CastAction(int Direction, float DrainingMultiplie
 	if (OwnerPawn->bIsBurningMetal)
 	{
 		OwnerPawn->DrainingRatio = OwnerPawn->DrainingRatio + DrainingMultiplier;
+		UE_LOG(LogTemp, Warning, TEXT("owo"));
 	}
 	else if (!OwnerPawn->bIsBurningMetal)
 	{
 		OwnerPawn->TryResetDrainingRatio();
 		OwnerPawn->ResetStrValue();
+		OwnerPawn->bIsHiddingPulses = false;
+		ResetTime();
 		bIsBurningTin = false;
+		bIsBurningCopper = false;
 	}
 	return true;
 }
@@ -57,6 +62,12 @@ FVector UAllomancySkillComponent::GetEndVector(AController* OwnerController)
 	return Loc + Rot.Vector() * TraceDistance;
 }
 
+void UAllomancySkillComponent::ResetTime()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	OwnerPawn->CustomTimeDilation = 1;
+}
+
 //////////////////////////////////////Getters
 /////////////////////////////////////////////////////////////////////////
 
@@ -74,3 +85,4 @@ bool UAllomancySkillComponent::HasOwner()
 {
 	return OwnerPawn != nullptr;
 }
+

@@ -29,7 +29,6 @@ void UAtiumLerasiumComponent::TickComponent(float DeltaTime, ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-
 }
 
 bool UAtiumLerasiumComponent::BurnMetal(int Direction)
@@ -54,10 +53,6 @@ bool UAtiumLerasiumComponent::BurnMetal(int Direction)
 		{
 			BurnAtiumLerasium(TimeDilation, CustomTimeDilation);
 		}
-		else
-		{
-			StopBurnAtiumLerasium();
-		}
 		return true;
 
 	}
@@ -69,10 +64,4 @@ void UAtiumLerasiumComponent::BurnAtiumLerasium(float TimeDilation, float Custom
 	bIsBurningAtium = true;
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), TimeDilation);
 	OwnerPawn->CustomTimeDilation = CustomTimeDilation;
-}
-
-void UAtiumLerasiumComponent::StopBurnAtiumLerasium()
-{
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
-	OwnerPawn->CustomTimeDilation = 1;
 }

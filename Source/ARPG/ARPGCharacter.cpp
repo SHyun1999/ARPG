@@ -11,6 +11,7 @@
 #include "PewterTinComponent.h"
 #include "DuraluminAluminumComponent.h"
 #include "AtiumLerasiumComponent.h"
+#include "BronzeCopperComponent.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -23,6 +24,9 @@ AARPGCharacter::AARPGCharacter()
 
 	SteelIronComponent = CreateDefaultSubobject<USteelIronComponent>(TEXT("Steel Iron component"));
 	AddOwnedComponent(SteelIronComponent);
+
+	BronzeCopperComponent = CreateDefaultSubobject<UBronzeCopperComponent>(TEXT("Bronze Copper component"));
+	AddOwnedComponent(BronzeCopperComponent);
 
 	PewterTinComponent = CreateDefaultSubobject<UPewterTinComponent>(TEXT("Pewter Tin component"));
 	AddOwnedComponent(PewterTinComponent);
@@ -92,6 +96,7 @@ void AARPGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("LerasiumBurn"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryAtiumLerasium<-1>);
 	PlayerInputComponent->BindAction(TEXT("DuraluminFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminAluminum<1>);
 	PlayerInputComponent->BindAction(TEXT("AluminumFlare"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryDuraluminAluminum<-1>);
+	PlayerInputComponent->BindAction(TEXT("BronzeSearch"), EInputEvent::IE_Pressed, this, &AARPGCharacter::TryBronzeSearch<1>);
 	PlayerInputComponent->BindAction(TEXT("DrinkVial"), EInputEvent::IE_Pressed, this, &AARPGCharacter::DrinkDelay);
 	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AARPGCharacter::Attack);
 
@@ -244,6 +249,38 @@ void AARPGCharacter::TryAtiumLerasium(int Direction)
 		MetalReserveComponent->ReduceMetalReserve(MetalToBurn); //only reduce metal when starting action, not when cancelling it.
 	}
 	AtiumLerasiumComponent->CastAction(Direction, DrainingMultiplierToApply);
+	bLastActionSuccess = true;
+}
+
+
+template <int Direction>
+void AARPGCharacter::TryBronzeSearch()
+{
+	NameOfLastAction = __func__;
+	TryBronzeSearch(Direction);
+}
+void AARPGCharacter::TryBronzeSearch(int Direction)
+{
+	float MetalToBurn;
+	if (Direction < 0)
+	{
+		MetalToBurn = PewterActionCost;
+		DrainingMultiplierToApply = PewterDrainingMultiplier;
+	}
+	else
+	{
+		DrainingMultiplierToApply = TinDrainingMultiplier; //TODO: set copper and bronze action cost and multiplier
+		MetalToBurn = TinActionCost;
+	}
+
+	if (!TryCanCastAllomanticAction(MetalToBurn)) { bLastActionSuccess = false;  return; };
+	bIsBurningMetal = !bIsBurningMetal;
+
+	if (bIsBurningMetal)
+	{
+		MetalReserveComponent->ReduceMetalReserve(MetalToBurn); //only reduce metal when starting action, not when cancelling it.
+	}
+	BronzeCopperComponent->CastAction(Direction,1);
 	bLastActionSuccess = true;
 }
 
