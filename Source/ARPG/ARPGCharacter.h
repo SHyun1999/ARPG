@@ -4,11 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "DefaultItem.h"
 #include "ARPGCharacter.generated.h"
 
 class AWeapon;
 class UMetalComponent;
 class AARPGCharacterController;
+
+
+USTRUCT(BluePrintType)
+struct FInventory
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<ADefaultItem*> ItemList;
+};
 
 UCLASS()
 class ARPG_API AARPGCharacter : public ACharacter
@@ -48,6 +59,9 @@ public:
 	void ResetStrValue();
 	// multiplies current reserves by .03
 	void TrySetDuraluminEnhancement();
+
+	UFUNCTION(BlueprintCallable, Category = "item")
+		void AddToInventory(ADefaultItem* _Item);
 	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
@@ -77,6 +91,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	bool bHasAttacked;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+		FInventory Inventory;
 
 	//returns current metal reserve
 	UFUNCTION(BlueprintPure)

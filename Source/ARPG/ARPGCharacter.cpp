@@ -12,6 +12,7 @@
 #include "DuraluminAluminumComponent.h"
 #include "AtiumLerasiumComponent.h"
 #include "BronzeCopperComponent.h"
+#include "DefaultItem.h"
 
 // Sets default values
 AARPGCharacter::AARPGCharacter()
@@ -375,6 +376,11 @@ void AARPGCharacter::ToggleDebuggingScreen()
 	{
 		CharController->ToggleDebugScreen();
 	}
+}
+
+void AARPGCharacter::AddToInventory(ADefaultItem* _Item)
+{
+	Inventory.ItemList.Add(_Item);
 }
 
 FString AARPGCharacter::GetLastAction()
