@@ -23,6 +23,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	//base cast action
 	virtual bool CastAction(int Direction, float DrainingMultiplier);
 
 	class AARPGCharacter* OwnerPawn;
@@ -50,10 +51,15 @@ public:
 
 	AStaticMeshActor* LastActor;
 
+	//see if allomantic skill is toggleable
 	bool bIsToggleable;
+	//check if burning tin
 	bool bIsBurningTin = false;
+	//check if burning atium
 	bool bIsBurningAtium = false;
+	//check if burning copper
 	bool bIsBurningCopper= false;
+	//check if burning bronze
 	bool bIsBurningBronze = false;
 
 };

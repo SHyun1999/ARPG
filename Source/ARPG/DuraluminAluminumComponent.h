@@ -17,6 +17,8 @@ class ARPG_API UDuraluminAluminumComponent : public UAllomancySkillComponent
 	UDuraluminAluminumComponent();
 	
 public:
+	//Gets the multiplier of duralumin that will enhance the next ability
 	void SetDuraluminEnhancement();
+	//OwnerPawn->MetalReserve->drain metal reserves
 	void DrainMetalReserves();
 };

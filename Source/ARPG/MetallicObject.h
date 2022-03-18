@@ -26,8 +26,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	//mesh comp
 	UPROPERTY(VisibleAnywhere)
 		UStaticMeshComponent* MeshComp;
+
+	//is metal?
 	UPROPERTY(VisibleAnywhere)
 		UMetalComponent* MetalComp;
 };

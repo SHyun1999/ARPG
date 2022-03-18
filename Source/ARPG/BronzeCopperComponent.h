@@ -20,6 +20,7 @@ public:
 	bool CastAction(int Direction, float DrainingMultiplier)override;
 
 private:
+	//searches for pawns within a 100 m that are burning metal
 	bool SearchAllomanticPulse();
 	bool BurnCopper();
 	bool BurnMetal(int Direction);

@@ -14,6 +14,7 @@ class ARPG_API ADefaultItem : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ADefaultItem();
+	//item name
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FString ItemName;
 

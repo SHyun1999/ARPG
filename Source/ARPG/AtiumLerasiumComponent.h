@@ -22,10 +22,14 @@ public:
 
 private:
 	bool BurnMetal(int Direction);
+	//modifies speed of world based on which metal is being burned
 	void BurnAtiumLerasium(float TimeDilation, float CustomTimeDilation);
 
+	//makes world slower
 	const float AtiumTimeDilation = .35f;
+	//makes player move at normal speed
 	const float AtiumCustomTime = 2.6f;
+	//makes world move faster
 	const float LerasiumTimeDilation = 1.55f;
 
 };

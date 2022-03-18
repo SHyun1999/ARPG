@@ -24,9 +24,11 @@ public:
 	void ToggleDebugScreen();
 
 private:
+	//player HUD class
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> HUDClass;
 
+	//DebugScreen class
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> DebugScreenClass;
 

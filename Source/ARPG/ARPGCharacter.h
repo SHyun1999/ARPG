@@ -63,34 +63,59 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "item")
 		void AddToInventory(ADefaultItem* _Item);
 	
-
+	//allows character to burn both bronze and copper
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UBronzeCopperComponent* BronzeCopperComponent;
+
+	//allows character to burn both atium and lerasium
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UAtiumLerasiumComponent* AtiumLerasiumComponent;
+
+	//allows character to burn both Duralumin and aluminum
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UDuraluminAluminumComponent* DuraluminAluminumComponent;
+
+	//allows character to burn both pewter and tin
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UPewterTinComponent* PewterTinComponent;
+
+	//allows character to burn both steel and iron
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class USteelIronComponent* SteelIronComponent;
+
+	//manages metal reserves
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	class UMetalReserveComponent* MetalReserveComponent;
+
+	//if true, allows character to drink to refill metal reserve
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Allomancy")
 	bool bHasFlask = false;
+
+	//check if player is actively burning a toggleable metal
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	bool bIsBurningMetal = false;
+	
+	//check if player is hiding metal by burning copper
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	bool bIsHiddingPulses = false;
+
+	//ratio at which metal reserves are draining passively
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DrainingRatio = 0.1;
+
+	//determines strong next duralumin-enhanced steelpush/ ironpull will me
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float DuraluminEnhancementMultiplier = 1;
+
+	//last action used.
 	UPROPERTY(EditAnywhere, Category = "Debugging")
 	FString NameOfLastAction = "";
+
+	//check if character has attacked
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	bool bHasAttacked;
 
+	//creates inventory structure
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 		FInventory Inventory;
 
@@ -109,6 +134,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetDrainingRatio()const;
 
+	//returns name of last action cast by char
 	UFUNCTION(BlueprintPure)
 	FString GetLastAction();
 	UFUNCTION(BlueprintPure)
@@ -122,7 +148,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool setSTR(float NewSTR);
 	
-
+	//checks if char burned duralumin
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	bool bDuraluminFlare = false;
 
@@ -190,23 +216,35 @@ private:
 	/////////////////////////////
 	
 	//ALLOMANCY VARIABLES
+	//character's maximum metal reserve
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float MaxMetalReserve = 100.f ;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	//cost of casting steel iron
 	float SteelIronActionCost = 10;
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
+	//base cost of toggling pewter
 	float PewterActionCost = 5;
+	//base cost of toggling tin
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float TinActionCost = 3;
+	//base cost of toggling duralumin
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float AtiumActionCost = 3;
 
+	//draining multiplier of burning atium
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float AtiumDrainingMultiplier = 2.4f;
+
+	//draining multiplier of burning pewter
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float PewterDrainingMultiplier = .5f;
+
+	//draining multiplier of burning tin
 	UPROPERTY(EditAnywhere, Category = "Allomancy")
 	float TinDrainingMultiplier = .3f;
+
+	//draining multiplier after cost of casting metals has been applied
 	float DrainingMultiplierToApply;
 	//MOVEMENT VARIABLES
 	UPROPERTY(EditAnywhere)
@@ -223,10 +261,8 @@ private:
 	UPROPERTY()
 	AWeapon* Weapon;
 
-
 	//DEBUGGING
 	AARPGCharacterController* CharController;
 	bool bLastActionSuccess;
 	
-
 };

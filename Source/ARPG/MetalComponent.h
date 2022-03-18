@@ -23,6 +23,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	//decides whether or not allomancy affects this metal object.
+	//allomancy doesnt affect aluminum
 	UPROPERTY(EditAnywhere)
 		bool bIsAlluminum = false;
 		
