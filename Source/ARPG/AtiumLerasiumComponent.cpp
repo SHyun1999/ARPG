@@ -24,13 +24,6 @@ bool UAtiumLerasiumComponent::CastAction(int Direction, float DrainingMultiplier
 
 }
 
-// Called every frame
-void UAtiumLerasiumComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-}
-
 bool UAtiumLerasiumComponent::BurnMetal(int Direction)
 {
 	if (!HasOwner()) return false;
